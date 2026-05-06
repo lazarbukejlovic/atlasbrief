@@ -5,7 +5,7 @@ import { useAuth } from '../hooks/useAuth';
 
 const Account = () => {
   const { user, currentPlan, planDetails, signOut } = useAuth();
-  const { savedIds } = useAtlasBrief();
+  const { savedBriefs } = useAtlasBrief();
 
   return (
     <div className="space-y-8">
@@ -50,7 +50,7 @@ const Account = () => {
 
       <AccountPlanCard
         plan={currentPlan}
-        savedCount={savedIds.length}
+        savedCount={savedBriefs.length}
         savedLimit={planDetails.savedBriefLimit}
       />
     </div>

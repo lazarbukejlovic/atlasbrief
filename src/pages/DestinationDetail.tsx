@@ -42,13 +42,13 @@ const DestinationDetail = () => {
       <div className="flex justify-end">
         <button
           type="button"
-          onClick={() => toggleSaved(destination.id)}
+          onClick={() => void toggleSaved(destination)}
           className={`inline-flex items-center gap-3 rounded-2xl px-6 py-3 text-sm font-semibold transition ${
             saved ? 'bg-navy text-white' : 'bg-sky-accent text-white shadow-card hover:shadow-card-hover'
           }`}
         >
           <Heart className={`h-4 w-4 ${saved ? 'fill-current' : ''}`} />
-          {saved ? 'Saved to watchlist' : 'Save to watchlist'}
+          {saved ? 'Remove from watchlist' : 'Save brief'}
         </button>
       </div>
 

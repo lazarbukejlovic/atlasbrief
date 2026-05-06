@@ -6,7 +6,7 @@ import ReadinessStatusBadge from './ReadinessStatusBadge';
 interface DestinationCardProps {
   destination: Destination;
   isSaved: boolean;
-  onToggleSaved: (id: string) => void;
+  onToggleSaved: (destination: Destination) => Promise<void>;
 }
 
 const DestinationCard = ({ destination, isSaved, onToggleSaved }: DestinationCardProps) => {
@@ -57,13 +57,13 @@ const DestinationCard = ({ destination, isSaved, onToggleSaved }: DestinationCar
         </div>
         <button
           type="button"
-          onClick={() => onToggleSaved(destination.id)}
+          onClick={() => void onToggleSaved(destination)}
           className={`inline-flex h-11 w-11 items-center justify-center rounded-2xl border transition ${
             isSaved
               ? 'border-transparent bg-navy text-white'
               : 'border-white/70 bg-white/75 text-navy hover:border-sky-accent/30'
           }`}
-          aria-label={isSaved ? 'Remove saved destination' : 'Save destination'}
+          aria-label={isSaved ? 'Remove from watchlist' : 'Save brief'}
         >
           <Heart className={`h-5 w-5 ${isSaved ? 'fill-current' : ''}`} />
         </button>
