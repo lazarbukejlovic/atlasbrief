@@ -15,7 +15,7 @@ import { getDestinationById } from '../data/destinations';
 
 const DestinationDetail = () => {
   const { id } = useParams();
-  const { isSaved, toggleSaved } = useAtlasBrief();
+  const { isSaved, toggleSaved, limitMessage } = useAtlasBrief();
 
   if (!id) {
     return <Navigate to="/destinations" replace />;
@@ -51,6 +51,20 @@ const DestinationDetail = () => {
           {saved ? 'Remove from watchlist' : 'Save brief'}
         </button>
       </div>
+
+      {limitMessage && !saved ? (
+        <div className="rounded-2xl border border-amber-300/80 bg-amber-50/90 px-4 py-3 text-sm text-amber-950">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="font-medium">{limitMessage}</p>
+            <Link
+              to="/pricing"
+              className="inline-flex items-center rounded-xl bg-navy px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-navy-light"
+            >
+              View Plus plan
+            </Link>
+          </div>
+        </div>
+      ) : null}
 
       <RequirementSummary
         requirementSummary={destination.requirementSummary}

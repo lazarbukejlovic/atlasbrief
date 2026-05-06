@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Outlet, useOutletContext } from 'react-router-dom';
+import { Link, Outlet, useOutletContext } from 'react-router-dom';
 import type { Destination } from '../data/destinations';
 import type { SavedBrief } from '../hooks/useSavedBriefs';
 import { useSavedBriefs } from '../hooks/useSavedBriefs';
@@ -74,8 +74,16 @@ const AppLayout = ({ destinations }: AppLayoutProps) => {
           </div>
         ) : null}
         {limitWarning ? (
-          <div className="mb-6 rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-            {limitWarning}
+          <div className="mb-6 overflow-hidden rounded-3xl border border-amber-300/80 bg-gradient-to-r from-amber-50 to-rose-50 shadow-card">
+            <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
+              <p className="text-sm font-medium text-amber-950">{limitWarning}</p>
+              <Link
+                to="/pricing"
+                className="inline-flex items-center rounded-2xl bg-navy px-4 py-2 text-sm font-semibold text-white transition hover:bg-navy-light"
+              >
+                View Plus plan
+              </Link>
+            </div>
           </div>
         ) : null}
         <Outlet context={contextValue} />
