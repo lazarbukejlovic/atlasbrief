@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #fafaf7;
+    color: #1e2d4a;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  #root {
+    min-height: 100vh;
+  }
+
+  ::selection {
+    background: rgba(96, 165, 250, 0.22);
+    color: #1e2d4a;
+  }
+}
+
+@layer components {
+  .glass-card {
+    background: rgba(255, 255, 255, 0.74);
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: 0 22px 55px rgba(30, 45, 74, 0.08);
+  }
+
+  .btn-primary {
+    @apply rounded-2xl bg-navy px-6 py-3 font-semibold text-white shadow-card transition hover:-translate-y-0.5 hover:bg-navy-light;
+  }
+
+  .btn-secondary {
+    @apply rounded-2xl border border-white/80 bg-white/85 px-6 py-3 font-semibold text-navy shadow-soft transition hover:-translate-y-0.5 hover:shadow-card;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg, #1e2d4a 0%, #3b82f6 58%, #d4a853 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .animate-trail {
+    animation: dash-trail 9s linear infinite;
+  }
+}
+
+@keyframes dash-trail {
+  from {
+    stroke-dashoffset: 320;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
