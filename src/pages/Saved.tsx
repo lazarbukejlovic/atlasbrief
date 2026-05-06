@@ -1,9 +1,13 @@
 import { useAtlasBrief } from '../components/AppLayout';
 import TripProfileCard from '../components/TripProfileCard';
 import EmptyState from '../components/EmptyState';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import UserPlanBadge from '../components/UserPlanBadge';
 
 const Saved = () => {
-  const { destinations, savedIds } = useAtlasBrief();
+  const { destinations, savedIds, savedLimit } = useAtlasBrief();
+  const { isAuthenticated, currentPlan } = useAuth();
   const savedDestinations = destinations.filter((destination) => savedIds.includes(destination.id));
 
   return (
@@ -14,6 +18,20 @@ const Saved = () => {
         <p className="mt-3 max-w-2xl text-base leading-8 text-navy-muted">
           Monitor your saved readiness briefs. Track changes in rules, costs, safety, and readiness status.
         </p>
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <UserPlanBadge plan={currentPlan} />
+          <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-navy shadow-soft">
+            Usage: {savedIds.length}/{savedLimit === 'Custom' ? 'Custom' : savedLimit}
+          </span>
+        </div>
+        {!isAuthenticated ? (
+          <div className="mt-4 rounded-2xl border border-sky-accent/20 bg-white/75 px-4 py-3 text-sm text-navy-muted">
+            Create an account to keep your readiness watchlist across devices.{' '}
+            <Link to="/signup" className="font-semibold text-sky-accent">
+              Create your readiness workspace
+            </Link>
+          </div>
+        ) : null}
       </section>
 
       {savedDestinations.length === 0 ? (

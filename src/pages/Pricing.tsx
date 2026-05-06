@@ -10,7 +10,7 @@ const Pricing = () => {
           AtlasBrief helps travelers, remote workers, and business teams make confident destination decisions before booking. Choose a plan for your trip-readiness workflow and upgrade when your watchlist grows.
         </p>
         <p className="mx-auto mt-4 max-w-3xl rounded-2xl border border-sky-accent/20 bg-white/70 px-4 py-3 text-sm text-navy-muted">
-          Payments, account management, and Stripe checkout are planned for the next build step.
+          Stripe checkout and subscription management are planned for the next build phase.
         </p>
       </section>
 
@@ -20,7 +20,7 @@ const Pricing = () => {
           price="$0"
           description="For first-time evaluators and occasional travelers."
           ctaLabel="Start free"
-          ctaTo="/pricing?plan=free"
+          ctaTo="/signup?plan=free"
           features={[
             '1 saved trip',
             'Manual destination refresh',
@@ -33,7 +33,7 @@ const Pricing = () => {
           price="$5/mo or $49/yr"
           description="For remote workers and frequent business travelers."
           ctaLabel="Start Plus"
-          ctaTo="/pricing?plan=plus"
+          ctaTo="/signup?plan=plus"
           featured
           features={[
             '5 saved trips',
@@ -48,7 +48,7 @@ const Pricing = () => {
           price="$9/mo or $89/yr"
           description="For families, teams, and extended stay planners."
           ctaLabel="Start Pro"
-          ctaTo="/pricing?plan=pro"
+          ctaTo="/signup?plan=pro"
           features={[
             '20 saved trips',
             'Family sharing',
@@ -91,7 +91,7 @@ const Pricing = () => {
             <div className="text-xs font-semibold uppercase tracking-[0.22em] text-sand mb-2">Pricing</div>
             <p className="text-4xl font-bold text-navy">Custom Pilot</p>
             <p className="mt-3 text-navy-muted text-sm">Contact us for a pilot engagement and pricing tailored to your use case.</p>
-            <a href="/pricing?plan=b2b" className="mt-6 btn-sand rounded-xl py-3 text-center font-semibold">
+            <a href="/account?intent=pilot" className="mt-6 btn-sand rounded-xl py-3 text-center font-semibold">
               Request pilot
             </a>
           </div>

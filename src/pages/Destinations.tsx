@@ -1,9 +1,12 @@
 import { useMemo, useState } from 'react';
 import { useAtlasBrief } from '../components/AppLayout';
 import DestinationCard from '../components/DestinationCard';
+import { useAuth } from '../hooks/useAuth';
+import { Link } from 'react-router-dom';
 
 const Destinations = () => {
   const { destinations, isSaved, toggleSaved } = useAtlasBrief();
+  const { isAuthenticated } = useAuth();
   const [regionFilter, setRegionFilter] = useState('All');
   const [labelFilter, setLabelFilter] = useState('All');
   const [costFilter, setCostFilter] = useState('All');
@@ -138,6 +141,15 @@ const Destinations = () => {
           </div>
         </div>
       </section>
+
+      {!isAuthenticated ? (
+        <section className="rounded-2xl border border-sky-accent/20 bg-white/75 px-4 py-3 text-sm text-navy-muted">
+          Create an account to keep your readiness watchlist across devices.{' '}
+          <Link to="/signup" className="font-semibold text-sky-accent">
+            Create your readiness workspace
+          </Link>
+        </section>
+      ) : null}
 
       <section className="grid gap-6 xl:grid-cols-2">
         {filteredDestinations.map((destination) => (

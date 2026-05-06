@@ -1,6 +1,7 @@
 import { Menu, Plane, X } from 'lucide-react';
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 const navItems = [
   { to: '/', label: 'Home' },
@@ -17,6 +18,7 @@ interface NavbarProps {
 
 const Navbar = ({ savedCount }: NavbarProps) => {
   const [open, setOpen] = useState(false);
+  const { isAuthenticated, signOut } = useAuth();
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/60 bg-ivory/80 backdrop-blur-xl">
@@ -56,6 +58,25 @@ const Navbar = ({ savedCount }: NavbarProps) => {
           <Link to="/pricing" className="btn-primary px-5 py-2.5 text-sm">
             Upgrade
           </Link>
+          {isAuthenticated ? (
+            <>
+              <Link to="/account" className="rounded-full border border-sky-accent/15 bg-white px-4 py-2 text-sm font-semibold text-navy shadow-soft">
+                Account
+              </Link>
+              <button type="button" onClick={() => void signOut()} className="rounded-full border border-white/80 bg-white/85 px-4 py-2 text-sm font-semibold text-navy shadow-soft transition hover:bg-white">
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="rounded-full border border-white/80 bg-white/85 px-4 py-2 text-sm font-semibold text-navy shadow-soft transition hover:bg-white">
+                Login
+              </Link>
+              <Link to="/signup" className="rounded-full bg-sky-accent px-4 py-2 text-sm font-semibold text-white shadow-soft transition hover:bg-sky-accent/90">
+                Sign up
+              </Link>
+            </>
+          )}
         </div>
 
         <button
@@ -71,6 +92,44 @@ const Navbar = ({ savedCount }: NavbarProps) => {
       {open ? (
         <div className="border-t border-white/70 bg-white/90 px-4 py-4 shadow-card lg:hidden">
           <div className="flex flex-col gap-2">
+            {isAuthenticated ? (
+              <>
+                <Link
+                  to="/account"
+                  onClick={() => setOpen(false)}
+                  className="rounded-2xl px-4 py-3 text-sm font-medium text-navy-muted"
+                >
+                  Account
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    void signOut();
+                    setOpen(false);
+                  }}
+                  className="rounded-2xl px-4 py-3 text-left text-sm font-medium text-navy-muted"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  onClick={() => setOpen(false)}
+                  className="rounded-2xl px-4 py-3 text-sm font-medium text-navy-muted"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/signup"
+                  onClick={() => setOpen(false)}
+                  className="rounded-2xl px-4 py-3 text-sm font-medium text-navy-muted"
+                >
+                  Sign up
+                </Link>
+              </>
+            )}
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
