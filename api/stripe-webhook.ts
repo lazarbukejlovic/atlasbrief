@@ -35,83 +35,15 @@ const getSupabaseAdmin = () => {
 };
 
 function readRawBody(req: VercelRequest): Promise<Buffer> {
-  return new Promise((resolve, reject) => {
-    const directBody = (req as VercelRequest & { body?: unknown }).body;
-    if (Buffer.isBuffer(directBody)) {
-      resolve(directBody);
-      return;
-    }
-
-    if (typeof directBody === 'string') {
-      resolve(Buffer.from(directBody));
-      return;
-    }
-
-    if (directBody && typeof directBody === 'object') {
-      console.warn('[stripe-webhook] falling back to JSON body for signature verification; this may fail');
-      resolve(Buffer.from(JSON.stringify(directBody)));
-      return;
-    }
-
-    if ((req as VercelRequest & { complete?: boolean }).complete || req.readableEnded) {
-      resolve(Buffer.alloc(0));
-      return;
-    }
-
+  return (async () => {
     const chunks: Buffer[] = [];
-    let settled = false;
 
-    const cleanup = () => {
-      clearTimeout(timeout);
-      req.off('data', onData);
-      req.off('end', onEnd);
-      req.off('error', onError);
-      req.off('aborted', onAborted);
-      req.off('close', onClose);
-    };
-
-    const finish = (callback: () => void) => {
-      if (settled) {
-        return;
-      }
-
-      settled = true;
-      cleanup();
-      callback();
-    };
-
-    const onData = (chunk: Buffer | string) => {
+    for await (const chunk of req) {
       chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
-    };
+    }
 
-    const onEnd = () => {
-      finish(() => resolve(Buffer.concat(chunks)));
-    };
-
-    const onError = (error: Error) => {
-      finish(() => reject(error));
-    };
-
-    const onAborted = () => {
-      finish(() => reject(new Error('Raw body read aborted')));
-    };
-
-    const onClose = () => {
-      if (!settled && ((req as VercelRequest & { complete?: boolean }).complete || req.readableEnded)) {
-        finish(() => resolve(Buffer.concat(chunks)));
-      }
-    };
-
-    const timeout = setTimeout(() => {
-      finish(() => reject(new Error('Raw body read timed out')));
-    }, 5000);
-
-    req.on('data', onData);
-    req.on('end', onEnd);
-    req.on('error', onError);
-    req.on('aborted', onAborted);
-    req.on('close', onClose);
-  });
+    return Buffer.concat(chunks);
+  })();
 }
 
 const toIsoFromUnixSeconds = (timestamp?: number | null) => {
@@ -237,9 +169,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-  if (!stripeSecretKey || !webhookSecret) {
-    return res.status(400).json({ error: 'Missing Stripe webhook configuration.' });
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET?.trim();
+  if (!stripeSecretKey) {
+    return res.status(500).json({ error: 'Missing Stripe secret key configuration.' });
+  }
+
+  if (!webhookSecret) {
+    return res.status(500).json({ error: 'Missing Stripe webhook secret.' });
   }
 
   let rawBody: Buffer;
