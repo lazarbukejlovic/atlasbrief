@@ -7,13 +7,19 @@ import DashboardCard from '../components/DashboardCard';
 import TripProfileCard from '../components/TripProfileCard';
 import UserPlanBadge from '../components/UserPlanBadge';
 import { getDestinationReadinessScore, destinations as allDestinations } from '../data/destinations';
+import { getRelativeUpdateLabel } from '../data/watchlistSignals';
 import { useAuth } from '../hooks/useAuth';
 
 const Dashboard = () => {
-  const { destinations, savedIds, savedLimit } = useAtlasBrief();
+  const { destinations, savedIds, savedLimit, watchlist, watchlistIds } = useAtlasBrief();
   const { isAuthenticated, currentPlan } = useAuth();
 
   const savedDestinations = destinations.filter((destination) => savedIds.includes(destination.id));
+  const watchlistPreview = watchlist.slice(0, 3);
+  const strongestWatchSignal = [...watchlist].sort((left, right) => {
+    const severityRank = { elevated: 3, watch: 2, low: 1 };
+    return (severityRank[right.severity as keyof typeof severityRank] ?? 0) - (severityRank[left.severity as keyof typeof severityRank] ?? 0);
+  })[0] ?? null;
   const strongestReadiness = [...destinations].sort(
     (left, right) => getDestinationReadinessScore(right) - getDestinationReadinessScore(left)
   )[0];
@@ -68,10 +74,10 @@ const Dashboard = () => {
 
       <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         <DashboardCard
-          eyebrow="Saved atlas"
-          title="Tracked destinations"
+          eyebrow="Saved briefs"
+          title="Saved readiness briefs"
           value={String(savedIds.length)}
-          detail="Your watchlist updates automatically when you add or remove destinations."
+          detail="Trip readiness briefs you can reopen quickly before making a booking call."
           icon={<Bookmark className="h-5 w-5" />}
         />
         <DashboardCard
@@ -102,14 +108,56 @@ const Dashboard = () => {
         <CurrencyWatch destination={strongestReadiness} />
       </section>
 
+      <section className="glass-card rounded-[1.75rem] border border-sky-accent/20 p-6">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <div className="text-xs font-semibold uppercase tracking-[0.22em] text-sky-accent">Watchlist Intelligence</div>
+            <h2 className="mt-3 text-3xl font-semibold text-navy">Signals across tracked destinations</h2>
+            {strongestWatchSignal ? (
+              <p className="mt-2 text-sm text-navy-muted">
+                Strongest signal: {strongestWatchSignal.safety_signal} | {strongestWatchSignal.last_updated_label}
+              </p>
+            ) : (
+              <p className="mt-2 text-sm text-navy-muted">
+                Monitor destination movement before you book. Your watchlist highlights live travel-readiness signals.
+              </p>
+            )}
+          </div>
+          <Link to="/watchlist" className="btn-secondary inline-flex items-center justify-center px-5 py-2.5 text-sm">
+            Open Watchlist
+          </Link>
+        </div>
+
+        {watchlistPreview.length === 0 ? (
+          <div className="mt-6 rounded-2xl border border-white/70 bg-white/80 p-6 text-sm text-navy-muted">
+            <p className="font-semibold text-navy">No watched destinations yet</p>
+            <p className="mt-2">Start a destination watchlist to monitor signals before you commit to flights or lodging.</p>
+            <Link to="/destinations" className="mt-4 inline-flex rounded-2xl bg-navy px-4 py-2 text-sm font-semibold text-white transition hover:bg-navy-light">
+              Explore destinations
+            </Link>
+          </div>
+        ) : (
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
+            {watchlistPreview.map((item) => (
+              <article key={item.id ?? item.destination_id} className="rounded-2xl border border-white/70 bg-white/80 p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-accent">{item.country}</p>
+                <h3 className="mt-2 text-lg font-semibold text-navy">{item.destination_name}</h3>
+                <p className="mt-3 text-sm text-navy-muted">{item.safety_signal}</p>
+                <p className="mt-2 text-xs text-navy-muted">{item.last_updated_label}</p>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+
       <section className="space-y-5">
         <div className="flex items-end justify-between gap-4">
           <div>
-            <div className="text-xs font-semibold uppercase tracking-[0.22em] text-sky-accent">Watchlist</div>
-              <h2 className="mt-3 text-3xl font-semibold text-navy">Saved readiness briefs</h2>
+            <div className="text-xs font-semibold uppercase tracking-[0.22em] text-sky-accent">Saved Briefs</div>
+              <h2 className="mt-3 text-3xl font-semibold text-navy">Saved trip readiness briefs</h2>
           </div>
           <Link to="/saved" className="text-sm font-semibold text-navy hover:text-sky-accent">
-            Open saved page
+            Open Saved Briefs
           </Link>
         </div>
         <div className="grid gap-6 xl:grid-cols-2">

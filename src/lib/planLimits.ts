@@ -6,8 +6,18 @@ export const PLAN_LIMITS: Record<BillingPlan, number> = {
   pro: 20,
 };
 
+export const WATCHLIST_LIMITS: Record<BillingPlan, number> = {
+  free: 3,
+  plus: 15,
+  pro: 15,
+};
+
 export function getSavedBriefLimit(plan: BillingPlan) {
   return PLAN_LIMITS[plan] ?? PLAN_LIMITS.free;
+}
+
+export function getWatchlistLimit(plan: BillingPlan) {
+  return WATCHLIST_LIMITS[plan] ?? WATCHLIST_LIMITS.free;
 }
 
 export function toBillingPlan(plan: string | null | undefined): BillingPlan {
@@ -28,8 +38,20 @@ export function getSavedLimitMessage(plan: BillingPlan): string {
   }
 
   if (plan === 'plus') {
-    return 'Plus plan includes 5 saved trips. Upgrade to Pro for 20 saved trips.';
+    return 'Plus plan includes 5 saved trips.';
   }
 
   return `Your current plan includes ${getSavedBriefLimit(plan)} saved trips. Remove a saved trip or upgrade to save more.`;
+}
+
+export function getWatchlistLimitMessage(plan: BillingPlan): string {
+  if (plan === 'free') {
+    return 'Free plan includes 3 watched destinations. Upgrade to Plus for 15.';
+  }
+
+  if (plan === 'plus') {
+    return 'Plus plan includes 15 watched destinations.';
+  }
+
+  return `Your current plan includes ${getWatchlistLimit(plan)} watched destinations.`;
 }

@@ -12,10 +12,19 @@ import TripReadinessBrief from '../components/TripReadinessBrief';
 import WhatChangedPanel from '../components/WhatChangedPanel';
 import SourceFreshnessPanel from '../components/SourceFreshnessPanel';
 import { getDestinationById } from '../data/destinations';
+import { useAuth } from '../hooks/useAuth';
 
 const DestinationDetail = () => {
   const { id } = useParams();
-  const { isSaved, toggleSaved, limitMessage } = useAtlasBrief();
+  const {
+    isSaved,
+    toggleSaved,
+    limitMessage,
+    isWatched,
+    toggleWatchlist,
+    watchlistLimitMessage,
+  } = useAtlasBrief();
+  const { isAuthenticated } = useAuth();
 
   if (!id) {
     return <Navigate to="/destinations" replace />;
@@ -27,6 +36,7 @@ const DestinationDetail = () => {
   }
 
   const saved = isSaved(destination.id);
+  const watched = isWatched(destination.id);
 
   return (
     <div className="space-y-10">
@@ -39,7 +49,7 @@ const DestinationDetail = () => {
 
       <TripReadinessBrief destination={destination} compact={false} />
 
-      <div className="flex justify-end">
+      <div className="flex flex-wrap justify-end gap-3">
         <button
           type="button"
           onClick={() => void toggleSaved(destination)}
@@ -48,14 +58,52 @@ const DestinationDetail = () => {
           }`}
         >
           <Heart className={`h-4 w-4 ${saved ? 'fill-current' : ''}`} />
-          {saved ? 'Remove from watchlist' : 'Save brief'}
+          {saved ? 'Remove saved brief' : 'Save brief'}
+        </button>
+        <button
+          type="button"
+          onClick={() => void toggleWatchlist(destination)}
+          disabled={!isAuthenticated}
+          className={`inline-flex items-center gap-3 rounded-2xl px-6 py-3 text-sm font-semibold transition ${
+            watched
+              ? 'border border-sky-accent/20 bg-white text-navy shadow-soft'
+              : 'border border-white/70 bg-white/80 text-navy shadow-soft hover:border-sky-accent/30'
+          } disabled:cursor-not-allowed disabled:opacity-70`}
+        >
+          {watched ? 'Remove from Watchlist' : 'Add to Watchlist'}
         </button>
       </div>
+
+      {watched ? (
+        <div className="rounded-2xl border border-sky-accent/20 bg-sky-50/70 px-4 py-3 text-sm text-navy-muted">
+          <span className="font-semibold text-navy">Watching</span> this destination for readiness, cost, safety, and local rule shifts.
+        </div>
+      ) : null}
+
+      {!isAuthenticated ? (
+        <div className="rounded-2xl border border-sky-accent/20 bg-white/80 px-4 py-3 text-sm text-navy-muted">
+          Sign in to monitor destination watchlist signals across devices.
+        </div>
+      ) : null}
 
       {limitMessage && !saved ? (
         <div className="rounded-2xl border border-amber-300/80 bg-amber-50/90 px-4 py-3 text-sm text-amber-950">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <p className="font-medium">{limitMessage}</p>
+            <Link
+              to="/pricing"
+              className="inline-flex items-center rounded-xl bg-navy px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-navy-light"
+            >
+              View plans
+            </Link>
+          </div>
+        </div>
+      ) : null}
+
+      {watchlistLimitMessage && !watched ? (
+        <div className="rounded-2xl border border-amber-300/80 bg-amber-50/90 px-4 py-3 text-sm text-amber-950">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="font-medium">{watchlistLimitMessage}</p>
             <Link
               to="/pricing"
               className="inline-flex items-center rounded-xl bg-navy px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-navy-light"

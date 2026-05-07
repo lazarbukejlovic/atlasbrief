@@ -2,6 +2,8 @@ import { useMemo } from 'react';
 import { Link, Outlet, useOutletContext } from 'react-router-dom';
 import type { Destination } from '../data/destinations';
 import type { SavedBrief } from '../hooks/useSavedBriefs';
+import type { DestinationWatchlistRow } from '../data/watchlistSignals';
+import { useDestinationWatchlist } from '../hooks/useDestinationWatchlist';
 import { useSavedBriefs } from '../hooks/useSavedBriefs';
 import Footer from './Footer';
 import Navbar from './Navbar';
@@ -12,6 +14,15 @@ export interface AtlasBriefContextValue {
   savedIds: string[];
   toggleSaved: (destination: Destination) => Promise<void>;
   isSaved: (id: string) => boolean;
+  watchlist: DestinationWatchlistRow[];
+  watchlistIds: string[];
+  toggleWatchlist: (destination: Destination) => Promise<void>;
+  removeFromWatchlist: (destinationId: string) => Promise<void>;
+  isWatched: (id: string) => boolean;
+  loadingWatchlist: boolean;
+  watchlistError: string | null;
+  watchlistLimit: number;
+  watchlistLimitMessage: string | null;
   loadingSavedBriefs: boolean;
   savedBriefsError: string | null;
   savedLimit: number | 'Custom';
@@ -32,6 +43,17 @@ const AppLayout = ({ destinations }: AppLayoutProps) => {
     toggleSaved,
     isSaved,
   } = useSavedBriefs(destinations);
+  const {
+    watchlist,
+    watchlistIds,
+    loading: loadingWatchlist,
+    error: watchlistError,
+    limitWarning: watchlistLimitMessage,
+    watchlistLimit,
+    toggleWatchlist,
+    removeFromWatchlist,
+    isWatched,
+  } = useDestinationWatchlist();
 
   const savedIds = useMemo(
     () => savedBriefs.map((brief) => brief.destination_id),
@@ -45,6 +67,15 @@ const AppLayout = ({ destinations }: AppLayoutProps) => {
       savedIds,
       toggleSaved,
       isSaved,
+      watchlist,
+      watchlistIds,
+      toggleWatchlist,
+      removeFromWatchlist,
+      isWatched,
+      loadingWatchlist,
+      watchlistError,
+      watchlistLimit,
+      watchlistLimitMessage,
       loadingSavedBriefs: loading,
       savedBriefsError: error,
       savedLimit,
@@ -56,6 +87,15 @@ const AppLayout = ({ destinations }: AppLayoutProps) => {
       savedIds,
       toggleSaved,
       isSaved,
+      watchlist,
+      watchlistIds,
+      toggleWatchlist,
+      removeFromWatchlist,
+      isWatched,
+      loadingWatchlist,
+      watchlistError,
+      watchlistLimit,
+      watchlistLimitMessage,
       loading,
       error,
       savedLimit,

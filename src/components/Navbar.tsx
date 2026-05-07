@@ -7,6 +7,7 @@ const navItems = [
   { to: '/', label: 'Home' },
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/destinations', label: 'Destinations' },
+  { to: '/watchlist', label: 'Watchlist' },
   { to: '/saved', label: 'Saved' },
   { to: '/pricing', label: 'Pricing' },
   { to: '/about', label: 'About' },

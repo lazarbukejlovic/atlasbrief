@@ -63,7 +63,7 @@ const DestinationCard = ({ destination, isSaved, onToggleSaved }: DestinationCar
               ? 'border-transparent bg-navy text-white'
               : 'border-white/70 bg-white/75 text-navy hover:border-sky-accent/30'
           }`}
-          aria-label={isSaved ? 'Remove from watchlist' : 'Save brief'}
+            aria-label={isSaved ? 'Remove saved brief' : 'Save brief'}
         >
           <Heart className={`h-5 w-5 ${isSaved ? 'fill-current' : ''}`} />
         </button>
