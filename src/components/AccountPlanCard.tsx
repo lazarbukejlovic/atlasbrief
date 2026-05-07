@@ -7,6 +7,8 @@ interface AccountPlanCardProps {
   savedCount: number;
   savedLimit: number | 'Custom';
   subscriptionStatus: string;
+  cancelAtPeriodEnd?: boolean;
+  cancelDateLabel?: string | null;
   billingError: string | null;
   showManageBilling: boolean;
   portalLoading: boolean;
@@ -20,6 +22,8 @@ const AccountPlanCard = ({
   savedCount,
   savedLimit,
   subscriptionStatus,
+  cancelAtPeriodEnd = false,
+  cancelDateLabel = null,
   billingError,
   showManageBilling,
   portalLoading,
@@ -56,6 +60,13 @@ const AccountPlanCard = ({
       <div className="mt-4 rounded-2xl border border-sky-accent/20 bg-white/70 p-4 text-sm text-navy-muted">
         Test-mode-ready checkout and billing portal are connected here. Live payment activation is not enabled in this workspace.
       </div>
+
+      {(plan === 'Plus' || plan === 'Pro') && cancelAtPeriodEnd && cancelDateLabel ? (
+        <div className="mt-4 rounded-2xl border border-sky-accent/20 bg-sky-50/70 p-4 text-sm text-navy-muted">
+          <p className="font-medium text-navy">Your {plan} plan is active until {cancelDateLabel}.</p>
+          <p className="mt-1 text-xs text-navy-muted">Cancels on {cancelDateLabel}</p>
+        </div>
+      ) : null}
 
       {billingError ? (
         <div className="mt-4 rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950">

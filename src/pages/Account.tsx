@@ -27,6 +27,24 @@ const Account = () => {
     return billingProfile?.subscription_status ?? 'inactive';
   }, [billingLoading, billingProfile?.subscription_status]);
 
+  const cancelNoticeDateLabel = useMemo(() => {
+    const value = billingProfile?.current_period_end ?? billingProfile?.cancel_at ?? null;
+    if (!value) {
+      return null;
+    }
+
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) {
+      return null;
+    }
+
+    return parsed.toLocaleDateString(undefined, {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  }, [billingProfile?.cancel_at, billingProfile?.current_period_end]);
+
   const overLimit =
     typeof planDetails.savedBriefLimit === 'number' &&
     savedBriefs.length > planDetails.savedBriefLimit;
@@ -105,6 +123,8 @@ const Account = () => {
         savedCount={savedBriefs.length}
         savedLimit={planDetails.savedBriefLimit}
         subscriptionStatus={subscriptionStatus}
+        cancelAtPeriodEnd={Boolean(billingProfile?.cancel_at_period_end)}
+        cancelDateLabel={cancelNoticeDateLabel}
         billingError={billingError}
         showManageBilling={Boolean(billingProfile?.stripe_customer_id)}
         portalLoading={billingAction === 'portal'}

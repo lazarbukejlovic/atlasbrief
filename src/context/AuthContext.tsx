@@ -21,6 +21,9 @@ export interface BillingProfile {
   stripe_customer_id: string | null;
   plan: string | null;
   subscription_status: string | null;
+  cancel_at_period_end: boolean | null;
+  current_period_end: string | null;
+  cancel_at: string | null;
 }
 
 const PLAN_CATALOG: Record<PlanName, PlanDetails> = {
@@ -109,7 +112,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const { data, error } = await supabase
       .from('user_billing')
-      .select('user_id, stripe_customer_id, plan, subscription_status')
+      .select('user_id, stripe_customer_id, plan, subscription_status, cancel_at_period_end, current_period_end, cancel_at')
       .eq('user_id', userId)
       .maybeSingle<BillingProfile>();
 

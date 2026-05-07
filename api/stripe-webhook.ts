@@ -243,11 +243,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       let userId = session.client_reference_id ?? session.metadata?.userId ?? null;
       let subscriptionStatus: Stripe.Subscription.Status | null = null;
       let currentPeriodEnd: string | null = null;
+      let cancelAt: string | null = null;
+      let cancelAtPeriodEnd = false;
 
       if (subscriptionId) {
         const subscription = await stripe.subscriptions.retrieve(subscriptionId);
         subscriptionStatus = subscription.status;
         currentPeriodEnd = toIsoFromUnixSeconds(subscription.current_period_end);
+        cancelAt = toIsoFromUnixSeconds(subscription.cancel_at);
+        cancelAtPeriodEnd = Boolean(subscription.cancel_at_period_end);
         userId = userId ?? subscription.metadata?.userId?.trim() ?? null;
       }
 
@@ -273,6 +277,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           subscription_status: subscriptionStatus,
           stripe_customer_id: customerId,
           stripe_subscription_id: subscriptionId,
+          cancel_at_period_end: cancelAtPeriodEnd,
+          cancel_at: cancelAt,
           current_period_end: currentPeriodEnd,
           updated_at: new Date().toISOString(),
         },
@@ -287,7 +293,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(200).json({ received: true });
     }
 
-    if (event.type === 'customer.subscription.updated' || event.type === 'customer.subscription.deleted') {
+    if (
+      event.type === 'customer.subscription.created' ||
+      event.type === 'customer.subscription.updated' ||
+      event.type === 'customer.subscription.deleted'
+    ) {
       const subscription = event.data.object as Stripe.Subscription;
       const customerId = getCustomerId(subscription.customer);
       const userId = await resolveUserIdFromSubscription(subscription, supabaseAdmin);
@@ -307,10 +317,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         hasUserId: true,
       });
 
-      const plan =
-        event.type === 'customer.subscription.deleted' ? 'free' : mapPlanFromStatus(subscription.status);
-      const subscriptionStatus =
-        event.type === 'customer.subscription.deleted' ? subscription.status ?? 'canceled' : subscription.status;
+      const isDeleted = event.type === 'customer.subscription.deleted';
+      const plan = isDeleted ? 'free' : mapPlanFromStatus(subscription.status);
+      const subscriptionStatus = isDeleted ? 'canceled' : subscription.status;
 
       const { error } = await supabaseAdmin.from('user_billing').upsert(
         {
@@ -319,6 +328,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           subscription_status: subscriptionStatus,
           stripe_customer_id: customerId,
           stripe_subscription_id: subscription.id,
+          cancel_at_period_end: Boolean(subscription.cancel_at_period_end),
+          cancel_at: toIsoFromUnixSeconds(subscription.cancel_at),
           current_period_end: toIsoFromUnixSeconds(subscription.current_period_end),
           updated_at: new Date().toISOString(),
         },
