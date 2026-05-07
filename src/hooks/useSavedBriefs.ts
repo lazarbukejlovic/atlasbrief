@@ -3,6 +3,7 @@ import type { Destination } from '../data/destinations';
 import { getDestinationReadinessScore } from '../data/destinations';
 import { useAuth } from './useAuth';
 import { isSupabaseConfigured, supabase } from '../lib/supabaseClient';
+import { getSavedBriefLimit, getSavedLimitMessage, toBillingPlan } from '../lib/planLimits';
 
 const LOCAL_SAVED_KEY = 'atlasbrief-saved-destinations:guest';
 
@@ -62,6 +63,30 @@ export const useSavedBriefs = (
     return map;
   }, [destinations]);
 
+  const currentBillingPlan = useMemo(() => toBillingPlan(currentPlan), [currentPlan]);
+
+  const hasCustomLimit = planDetails.savedBriefLimit === 'Custom';
+
+  const enforcedSavedLimit = useMemo(() => {
+    if (hasCustomLimit) {
+      return Number.MAX_SAFE_INTEGER;
+    }
+
+    if (typeof planDetails.savedBriefLimit === 'number') {
+      return planDetails.savedBriefLimit;
+    }
+
+    return getSavedBriefLimit(currentBillingPlan);
+  }, [currentBillingPlan, hasCustomLimit, planDetails.savedBriefLimit]);
+
+  const savedLimitDisplay = useMemo<number | 'Custom'>(() => {
+    if (hasCustomLimit) {
+      return 'Custom';
+    }
+
+    return enforcedSavedLimit;
+  }, [enforcedSavedLimit, hasCustomLimit]);
+
   const getSavedBriefs = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -70,6 +95,7 @@ export const useSavedBriefs = (
       const { data, error: queryError } = await supabase
         .from('saved_briefs')
         .select('*')
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
       if (queryError) {
@@ -138,17 +164,39 @@ export const useSavedBriefs = (
         return;
       }
 
-      if (
-        isAuthenticated &&
-        currentPlan === 'Free' &&
-        typeof planDetails.savedBriefLimit === 'number' &&
-        savedBriefs.length >= planDetails.savedBriefLimit
-      ) {
-        setLimitWarning('Free plan includes 1 saved trip. Upgrade to Plus for 5 saved trips.');
-        return;
-      }
-
       if (isAuthenticated && user?.id && isSupabaseConfigured && supabase) {
+        const { data: existingRow, error: existingError } = await supabase
+          .from('saved_briefs')
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('destination_id', destination.id)
+          .maybeSingle<{ id: string }>();
+
+        if (existingError) {
+          setError('Could not save this brief right now. Please try again.');
+          return;
+        }
+
+        if (existingRow?.id) {
+          return;
+        }
+
+        const { count, error: countError } = await supabase
+          .from('saved_briefs')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', user.id);
+
+        if (countError) {
+          setError('Could not save this brief right now. Please try again.');
+          return;
+        }
+
+        const currentCount = count ?? savedBriefs.length;
+        if (currentCount >= enforcedSavedLimit) {
+          setLimitWarning(getSavedLimitMessage(currentBillingPlan));
+          return;
+        }
+
         const payload = {
           user_id: user.id,
           destination_id: destination.id,
@@ -169,11 +217,19 @@ export const useSavedBriefs = (
           .single();
 
         if (insertError) {
+          if ((insertError as { code?: string }).code === '23505') {
+            return;
+          }
           setError('Could not save this brief right now. Please try again.');
           return;
         }
 
         setSavedBriefs((current) => [data as SavedBrief, ...current]);
+        return;
+      }
+
+      if (savedBriefs.length >= getSavedBriefLimit('free')) {
+        setLimitWarning(getSavedLimitMessage('free'));
         return;
       }
 
@@ -183,9 +239,9 @@ export const useSavedBriefs = (
       setSavedBriefs((current) => [toLocalBrief(destination), ...current]);
     },
     [
-      currentPlan,
+      currentBillingPlan,
+      enforcedSavedLimit,
       isAuthenticated,
-      planDetails.savedBriefLimit,
       savedBriefs,
       user?.id,
     ]
@@ -200,6 +256,7 @@ export const useSavedBriefs = (
         const { error: deleteError } = await supabase
           .from('saved_briefs')
           .delete()
+          .eq('user_id', user.id)
           .eq('destination_id', destinationId);
 
         if (deleteError) {
@@ -247,7 +304,7 @@ export const useSavedBriefs = (
     loading,
     error,
     limitWarning,
-    savedLimit: planDetails.savedBriefLimit,
+    savedLimit: savedLimitDisplay,
     getSavedBriefs,
     saveBrief,
     removeBrief,

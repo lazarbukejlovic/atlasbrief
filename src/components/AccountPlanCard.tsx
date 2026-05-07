@@ -6,11 +6,30 @@ interface AccountPlanCardProps {
   plan: PlanName;
   savedCount: number;
   savedLimit: number | 'Custom';
+  subscriptionStatus: string;
+  billingError: string | null;
+  showManageBilling: boolean;
+  portalLoading: boolean;
+  checkoutLoading: boolean;
+  onManageBilling: () => void;
+  onUpgrade: () => void;
 }
 
-const AccountPlanCard = ({ plan, savedCount, savedLimit }: AccountPlanCardProps) => {
+const AccountPlanCard = ({
+  plan,
+  savedCount,
+  savedLimit,
+  subscriptionStatus,
+  billingError,
+  showManageBilling,
+  portalLoading,
+  checkoutLoading,
+  onManageBilling,
+  onUpgrade,
+}: AccountPlanCardProps) => {
   const usageLabel =
     savedLimit === 'Custom' ? `${savedCount} tracked` : `${savedCount}/${savedLimit} used`;
+  const savedLimitLabel = savedLimit === 'Custom' ? 'Custom' : `${savedLimit} saved trips`;
 
   return (
     <section className="glass-card rounded-[1.75rem] p-6">
@@ -19,28 +38,45 @@ const AccountPlanCard = ({ plan, savedCount, savedLimit }: AccountPlanCardProps)
         <UserPlanBadge plan={plan} />
       </div>
 
-      <div className="mt-5 grid gap-4 md:grid-cols-2">
+      <div className="mt-5 grid gap-4 md:grid-cols-3">
         <div className="card-base p-4">
           <p className="text-xs uppercase tracking-[0.2em] text-navy-muted">Saved brief usage</p>
           <p className="mt-2 text-lg font-semibold text-navy">{usageLabel}</p>
         </div>
         <div className="card-base p-4">
+          <p className="text-xs uppercase tracking-[0.2em] text-navy-muted">Saved trip limit</p>
+          <p className="mt-2 text-lg font-semibold text-navy">{savedLimitLabel}</p>
+        </div>
+        <div className="card-base p-4">
           <p className="text-xs uppercase tracking-[0.2em] text-navy-muted">Subscription status</p>
-          <p className="mt-2 text-lg font-semibold text-navy">Placeholder until Stripe phase</p>
+          <p className="mt-2 text-lg font-semibold capitalize text-navy">{subscriptionStatus}</p>
         </div>
       </div>
 
       <div className="mt-4 rounded-2xl border border-sky-accent/20 bg-white/70 p-4 text-sm text-navy-muted">
-        Stripe checkout and subscription management are planned for the next build phase.
+        Test-mode-ready checkout and billing portal are connected here. Live payment activation is not enabled in this workspace.
       </div>
+
+      {billingError ? (
+        <div className="mt-4 rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+          {billingError}
+        </div>
+      ) : null}
 
       <div className="mt-4 flex flex-wrap gap-3">
         <Link to="/pricing" className="btn-secondary px-5 py-2.5 text-sm">
           View plans
         </Link>
-        <button type="button" className="btn-primary px-5 py-2.5 text-sm" disabled>
-          Customer portal (planned)
-        </button>
+        {plan === 'Free' ? (
+          <button type="button" className="btn-primary px-5 py-2.5 text-sm" onClick={onUpgrade} disabled={checkoutLoading}>
+            {checkoutLoading ? 'Opening checkout...' : 'Upgrade to Plus'}
+          </button>
+        ) : null}
+        {showManageBilling ? (
+          <button type="button" className="btn-primary px-5 py-2.5 text-sm" onClick={onManageBilling} disabled={portalLoading}>
+            {portalLoading ? 'Opening billing...' : 'Manage billing'}
+          </button>
+        ) : null}
       </div>
     </section>
   );

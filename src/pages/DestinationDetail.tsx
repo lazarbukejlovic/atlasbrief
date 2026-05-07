@@ -60,7 +60,7 @@ const DestinationDetail = () => {
               to="/pricing"
               className="inline-flex items-center rounded-xl bg-navy px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-navy-light"
             >
-              View Plus plan
+              View plans
             </Link>
           </div>
         </div>

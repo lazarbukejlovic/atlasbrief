@@ -81,7 +81,7 @@ const AppLayout = ({ destinations }: AppLayoutProps) => {
                 to="/pricing"
                 className="inline-flex items-center rounded-2xl bg-navy px-4 py-2 text-sm font-semibold text-white transition hover:bg-navy-light"
               >
-                View Plus plan
+                View plans
               </Link>
             </div>
           </div>

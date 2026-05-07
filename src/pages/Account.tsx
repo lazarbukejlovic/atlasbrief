@@ -1,11 +1,63 @@
 import { Mail, ShieldCheck } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import AccountPlanCard from '../components/AccountPlanCard';
 import { useAtlasBrief } from '../components/AppLayout';
 import { useAuth } from '../hooks/useAuth';
+import { openBillingPortal, startPlusCheckout } from '../lib/billing';
 
 const Account = () => {
-  const { user, currentPlan, planDetails, signOut } = useAuth();
+  const {
+    user,
+    currentPlan,
+    planDetails,
+    billingProfile,
+    billingLoading,
+    refreshBilling,
+    signOut,
+  } = useAuth();
   const { savedBriefs } = useAtlasBrief();
+  const [billingError, setBillingError] = useState<string | null>(null);
+  const [billingAction, setBillingAction] = useState<'checkout' | 'portal' | null>(null);
+
+  const subscriptionStatus = useMemo(() => {
+    if (billingLoading) {
+      return 'Loading...';
+    }
+
+    return billingProfile?.subscription_status ?? 'inactive';
+  }, [billingLoading, billingProfile?.subscription_status]);
+
+  const overLimit =
+    typeof planDetails.savedBriefLimit === 'number' &&
+    savedBriefs.length > planDetails.savedBriefLimit;
+
+  const handleUpgrade = async () => {
+    try {
+      setBillingError(null);
+      setBillingAction('checkout');
+      await refreshBilling();
+      await startPlusCheckout();
+    } catch (error) {
+      setBillingError(
+        error instanceof Error ? error.message : 'Unable to open checkout right now.'
+      );
+      setBillingAction(null);
+    }
+  };
+
+  const handleManageBilling = async () => {
+    try {
+      setBillingError(null);
+      setBillingAction('portal');
+      await refreshBilling();
+      await openBillingPortal();
+    } catch (error) {
+      setBillingError(
+        error instanceof Error ? error.message : 'Unable to open billing right now.'
+      );
+      setBillingAction(null);
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -38,9 +90,9 @@ const Account = () => {
             <h2 className="text-lg font-semibold text-navy">Subscription access</h2>
           </div>
           <p className="mt-4 text-sm text-navy-muted">Status</p>
-          <p className="text-lg font-semibold text-navy">Simulation mode (Free default)</p>
+          <p className="text-lg font-semibold capitalize text-navy">{subscriptionStatus}</p>
           <p className="mt-4 text-xs text-navy-muted">
-            Stripe checkout and customer portal are planned for the next build phase.
+            Billing status is read from your account profile. Missing billing data safely falls back to the Free plan until a billing record exists.
           </p>
           <button type="button" onClick={() => void signOut()} className="btn-secondary mt-6 px-5 py-2.5 text-sm">
             Logout
@@ -52,7 +104,20 @@ const Account = () => {
         plan={currentPlan}
         savedCount={savedBriefs.length}
         savedLimit={planDetails.savedBriefLimit}
+        subscriptionStatus={subscriptionStatus}
+        billingError={billingError}
+        showManageBilling={Boolean(billingProfile?.stripe_customer_id)}
+        portalLoading={billingAction === 'portal'}
+        checkoutLoading={billingAction === 'checkout'}
+        onManageBilling={() => void handleManageBilling()}
+        onUpgrade={() => void handleUpgrade()}
       />
+
+      {overLimit ? (
+        <section className="rounded-2xl border border-amber-300/80 bg-amber-50/90 px-4 py-3 text-sm text-amber-950">
+          You currently have more saved trips than your plan allows. Existing trips remain available, but new saves are blocked until you remove some or upgrade.
+        </section>
+      ) : null}
     </div>
   );
 };

@@ -1,10 +1,11 @@
-import { createContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
 import {
   isSupabaseConfigured,
   supabase,
   supabaseConfigMessage,
 } from '../lib/supabaseClient';
+import { PLAN_LIMITS } from '../lib/planLimits';
 
 export type PlanName = 'Free' | 'Plus' | 'Pro' | 'B2B Widget';
 
@@ -15,22 +16,29 @@ interface PlanDetails {
   features: string[];
 }
 
+export interface BillingProfile {
+  user_id: string;
+  stripe_customer_id: string | null;
+  plan: string | null;
+  subscription_status: string | null;
+}
+
 const PLAN_CATALOG: Record<PlanName, PlanDetails> = {
   Free: {
     name: 'Free',
-    savedBriefLimit: 1,
+    savedBriefLimit: PLAN_LIMITS.free,
     refreshType: 'Manual',
     features: ['Basic readiness scores'],
   },
   Plus: {
     name: 'Plus',
-    savedBriefLimit: 5,
+    savedBriefLimit: PLAN_LIMITS.plus,
     refreshType: 'Monitored',
     features: ['Change alerts', 'Budget bands', 'Currency and advisory watch'],
   },
   Pro: {
     name: 'Pro',
-    savedBriefLimit: 20,
+    savedBriefLimit: PLAN_LIMITS.pro,
     refreshType: 'Monitored',
     features: [
       'Family sharing',
@@ -52,31 +60,31 @@ interface AuthContextValue {
   isAuthenticated: boolean;
   isConfigured: boolean;
   loading: boolean;
+  billingLoading: boolean;
   authMessage: string | null;
   currentPlan: PlanName;
   planDetails: PlanDetails;
+  billingProfile: BillingProfile | null;
+  refreshBilling: () => Promise<void>;
   signInWithPassword: (email: string, password: string) => Promise<string | null>;
   signUpWithPassword: (email: string, password: string) => Promise<string | null>;
   signOut: () => Promise<void>;
 }
 
-const PLAN_STORAGE_PREFIX = 'atlasbrief-user-plan';
-
-const getStoredPlan = (userId: string | null): PlanName => {
-  if (!userId) {
-    return 'Free';
+const normalizePlanName = (value: string | null | undefined): PlanName => {
+  switch (value?.toLowerCase()) {
+    case 'plus':
+      return 'Plus';
+    case 'pro':
+      return 'Pro';
+    case 'b2b widget':
+    case 'b2b_widget':
+    case 'b2b-widget':
+      return 'B2B Widget';
+    case 'free':
+    default:
+      return 'Free';
   }
-
-  const raw = window.localStorage.getItem(`${PLAN_STORAGE_PREFIX}:${userId}`);
-  if (!raw) {
-    return 'Free';
-  }
-
-  if (raw === 'Free' || raw === 'Plus' || raw === 'Pro' || raw === 'B2B Widget') {
-    return raw;
-  }
-
-  return 'Free';
 };
 
 export const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -85,7 +93,42 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [billingLoading, setBillingLoading] = useState(true);
   const [currentPlan, setCurrentPlan] = useState<PlanName>('Free');
+  const [billingProfile, setBillingProfile] = useState<BillingProfile | null>(null);
+
+  const loadBillingProfile = useCallback(async (userId: string | null) => {
+    if (!userId || !isSupabaseConfigured || !supabase) {
+      setBillingProfile(null);
+      setCurrentPlan('Free');
+      setBillingLoading(false);
+      return null;
+    }
+
+    setBillingLoading(true);
+
+    const { data, error } = await supabase
+      .from('user_billing')
+      .select('user_id, stripe_customer_id, plan, subscription_status')
+      .eq('user_id', userId)
+      .maybeSingle<BillingProfile>();
+
+    if (error) {
+      setBillingProfile(null);
+      setCurrentPlan('Free');
+      setBillingLoading(false);
+      return null;
+    }
+
+    setBillingProfile(data ?? null);
+    setCurrentPlan(normalizePlanName(data?.plan));
+    setBillingLoading(false);
+    return data ?? null;
+  }, []);
+
+  const refreshBilling = useCallback(async () => {
+    await loadBillingProfile(user?.id ?? null);
+  }, [loadBillingProfile, user?.id]);
 
   useEffect(() => {
     let mounted = true;
@@ -93,6 +136,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const initialize = async () => {
       if (!isSupabaseConfigured || !supabase) {
         if (mounted) {
+          setBillingLoading(false);
           setLoading(false);
         }
         return;
@@ -102,7 +146,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (mounted) {
         setSession(data.session ?? null);
         setUser(data.session?.user ?? null);
-        setCurrentPlan(getStoredPlan(data.session?.user?.id ?? null));
+      }
+
+      await loadBillingProfile(data.session?.user?.id ?? null);
+
+      if (mounted) {
         setLoading(false);
       }
     };
@@ -118,10 +166,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      setLoading(true);
       setSession(nextSession ?? null);
       setUser(nextSession?.user ?? null);
-      setCurrentPlan(getStoredPlan(nextSession?.user?.id ?? null));
-      setLoading(false);
+
+      void loadBillingProfile(nextSession?.user?.id ?? null).finally(() => {
+        if (mounted) {
+          setLoading(false);
+        }
+      });
     });
 
     return () => {
@@ -152,6 +205,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (!supabase || !isSupabaseConfigured) {
       setSession(null);
       setUser(null);
+      setBillingProfile(null);
+      setCurrentPlan('Free');
       return;
     }
 
@@ -165,14 +220,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       isAuthenticated: Boolean(user),
       isConfigured: isSupabaseConfigured,
       loading,
+      billingLoading,
       authMessage: isSupabaseConfigured ? null : supabaseConfigMessage,
       currentPlan,
       planDetails: PLAN_CATALOG[currentPlan],
+      billingProfile,
+      refreshBilling,
       signInWithPassword,
       signUpWithPassword,
       signOut,
     }),
-    [currentPlan, loading, session, user]
+    [billingLoading, billingProfile, currentPlan, loading, refreshBilling, session, user]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

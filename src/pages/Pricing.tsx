@@ -1,6 +1,28 @@
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import PricingCard from '../components/PricingCard';
+import { useAuth } from '../hooks/useAuth';
+import { startPlusCheckout } from '../lib/billing';
+import { PLAN_LIMITS } from '../lib/planLimits';
 
 const Pricing = () => {
+  const { isAuthenticated } = useAuth();
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+
+  const handlePlusCheckout = async () => {
+    try {
+      setCheckoutError(null);
+      setCheckoutLoading(true);
+      await startPlusCheckout();
+    } catch (error) {
+      setCheckoutError(
+        error instanceof Error ? error.message : 'Unable to open checkout right now.'
+      );
+      setCheckoutLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-10">
       <section className="glass-card rounded-[2rem] p-8 text-center md:p-10">
@@ -10,8 +32,18 @@ const Pricing = () => {
           AtlasBrief helps travelers, remote workers, and business teams make confident destination decisions before booking. Choose a plan for your trip-readiness workflow and upgrade when your watchlist grows.
         </p>
         <p className="mx-auto mt-4 max-w-3xl rounded-2xl border border-sky-accent/20 bg-white/70 px-4 py-3 text-sm text-navy-muted">
-          Stripe checkout and subscription management are planned for the next build phase.
+          The subscription foundation is wired for test-mode checkout and billing management. Live payment activation is not enabled here.
         </p>
+        {!isAuthenticated ? (
+          <p className="mx-auto mt-4 max-w-3xl text-sm text-navy-muted">
+            Log in or create an account before starting a Plus subscription. You can <Link to="/login" className="font-semibold text-sky-accent">log in</Link> or <Link to="/signup?plan=plus" className="font-semibold text-sky-accent">create your account</Link> first.
+          </p>
+        ) : null}
+        {checkoutError ? (
+          <div className="mx-auto mt-4 max-w-3xl rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-left text-sm text-amber-950">
+            {checkoutError}
+          </div>
+        ) : null}
       </section>
 
       <section className="grid gap-6 xl:grid-cols-3">
@@ -22,7 +54,7 @@ const Pricing = () => {
           ctaLabel="Start free"
           ctaTo="/signup?plan=free"
           features={[
-            '1 saved trip',
+            `${PLAN_LIMITS.free} saved trip brief`,
             'Manual destination refresh',
             'Basic readiness scores',
             'Limited destination watch',
@@ -32,14 +64,16 @@ const Pricing = () => {
           name="Plus"
           price="$5/mo or $49/yr"
           description="For remote workers and frequent business travelers."
-          ctaLabel="Start Plus"
-          ctaTo="/signup?plan=plus"
+          ctaLabel={isAuthenticated ? (checkoutLoading ? 'Opening checkout...' : 'Upgrade to Plus') : 'Log in or sign up'}
+          ctaTo={isAuthenticated ? undefined : '/signup?plan=plus'}
+          onCtaClick={isAuthenticated ? () => void handlePlusCheckout() : undefined}
+          ctaDisabled={checkoutLoading}
           featured
           features={[
-            '5 saved trips',
-            'Change alerts',
-            'Budget bands and cost watch',
-            'Currency and advisory updates',
+            `${PLAN_LIMITS.plus} saved trip briefs`,
+            'Destination watchlist expansion',
+            'Daily destination brief foundation',
+            'Priority readiness features',
             'Everything in Free',
           ]}
         />
@@ -47,10 +81,11 @@ const Pricing = () => {
           name="Pro"
           price="$9/mo or $89/yr"
           description="For families, teams, and extended stay planners."
-          ctaLabel="Start Pro"
-          ctaTo="/signup?plan=pro"
+          ctaLabel="Coming soon"
+          onCtaClick={() => undefined}
+          ctaDisabled
           features={[
-            '20 saved trips',
+            `${PLAN_LIMITS.pro} saved trips`,
             'Family sharing',
             'Compare destinations side-by-side',
             'Early 30–90 day stay planner',
@@ -116,7 +151,7 @@ const Pricing = () => {
               <span className="text-sky-accent group-open:rotate-180 transition">+</span>
             </summary>
             <p className="mt-3 text-navy-muted text-sm">
-              Saved destinations are stored in your browser using localStorage. AtlasBrief does not currently track or transmit usage data.
+              Logged-out watchlists stay in your browser. Logged-in saved briefs and billing status are scoped to your account with Supabase authentication and row-level access controls.
             </p>
           </details>
           <details className="card-base p-4 cursor-pointer group">

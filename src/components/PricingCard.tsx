@@ -8,7 +8,9 @@ interface PricingCardProps {
   features: string[];
   featured?: boolean;
   ctaLabel: string;
-  ctaTo: string;
+  ctaTo?: string;
+  onCtaClick?: () => void;
+  ctaDisabled?: boolean;
 }
 
 const PricingCard = ({
@@ -19,7 +21,11 @@ const PricingCard = ({
   featured = false,
   ctaLabel,
   ctaTo,
+  onCtaClick,
+  ctaDisabled = false,
 }: PricingCardProps) => {
+  const ctaClassName = `mt-8 inline-flex w-full items-center justify-center rounded-2xl px-5 py-3 text-sm font-semibold transition ${featured ? 'bg-white text-navy hover:bg-ivory disabled:bg-white/70' : 'bg-navy text-white hover:bg-navy-light disabled:bg-navy/60'}`;
+
   return (
     <article
       className={`rounded-[1.75rem] p-6 transition duration-300 hover:-translate-y-1 ${featured ? 'bg-navy text-white shadow-card-hover' : 'glass-card text-navy'}`}
@@ -35,12 +41,15 @@ const PricingCard = ({
           </div>
         ))}
       </div>
-      <Link
-        to={ctaTo}
-        className={`mt-8 inline-flex w-full items-center justify-center rounded-2xl px-5 py-3 text-sm font-semibold transition ${featured ? 'bg-white text-navy hover:bg-ivory' : 'bg-navy text-white hover:bg-navy-light'}`}
-      >
-        {ctaLabel}
-      </Link>
+      {onCtaClick ? (
+        <button type="button" onClick={onCtaClick} className={ctaClassName} disabled={ctaDisabled}>
+          {ctaLabel}
+        </button>
+      ) : ctaTo ? (
+        <Link to={ctaTo} className={ctaClassName}>
+          {ctaLabel}
+        </Link>
+      ) : null}
     </article>
   );
 };
