@@ -89,7 +89,7 @@ const logSupabaseUpdateError = (error: unknown) => {
   });
 };
 
-const lookupUserIdFromBilling = async (
+const findBillingUserIdByStripeIds = async (
   supabaseAdmin: ReturnType<typeof getSupabaseAdmin>,
   subscriptionId: string | null,
   customerId: string | null
@@ -99,14 +99,20 @@ const lookupUserIdFromBilling = async (
       .from('user_billing')
       .select('user_id')
       .eq('stripe_subscription_id', subscriptionId)
-      .maybeSingle<BillingLookupRow>();
+      .limit(1)
+      .returns<BillingLookupRow[]>();
 
     if (error) {
       throw error;
     }
 
-    if (data?.user_id) {
-      return data.user_id;
+    const bySubscriptionId = data?.[0]?.user_id ?? null;
+    if (bySubscriptionId) {
+      return {
+        userId: bySubscriptionId,
+        foundBillingRow: true,
+        matchedBy: 'stripe_subscription_id' as const,
+      };
     }
   }
 
@@ -115,34 +121,28 @@ const lookupUserIdFromBilling = async (
       .from('user_billing')
       .select('user_id')
       .eq('stripe_customer_id', customerId)
-      .maybeSingle<BillingLookupRow>();
+      .limit(1)
+      .returns<BillingLookupRow[]>();
 
     if (error) {
       throw error;
     }
 
-    if (data?.user_id) {
-      return data.user_id;
+    const byCustomerId = data?.[0]?.user_id ?? null;
+    if (byCustomerId) {
+      return {
+        userId: byCustomerId,
+        foundBillingRow: true,
+        matchedBy: 'stripe_customer_id' as const,
+      };
     }
   }
 
-  return null;
-};
-
-const resolveUserIdFromSubscription = async (
-  subscription: Stripe.Subscription,
-  supabaseAdmin: ReturnType<typeof getSupabaseAdmin>
-) => {
-  const metadataUserId = subscription.metadata?.userId?.trim();
-  if (metadataUserId) {
-    return metadataUserId;
-  }
-
-  return lookupUserIdFromBilling(
-    supabaseAdmin,
-    subscription.id ?? null,
-    getCustomerId(subscription.customer)
-  );
+  return {
+    userId: null,
+    foundBillingRow: false,
+    matchedBy: null,
+  };
 };
 
 const respondIgnored = (res: VercelResponse) => {
@@ -299,10 +299,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       event.type === 'customer.subscription.deleted'
     ) {
       const subscription = event.data.object as Stripe.Subscription;
+      const subscriptionId = subscription.id;
       const customerId = getCustomerId(subscription.customer);
-      const userId = await resolveUserIdFromSubscription(subscription, supabaseAdmin);
+      const lookup = await findBillingUserIdByStripeIds(supabaseAdmin, subscriptionId, customerId);
+      const metadataUserId = subscription.metadata?.userId?.trim() ?? null;
+      const resolvedUserId = lookup.userId ?? metadataUserId;
 
-      if (!userId) {
+      console.log('[stripe-webhook] subscription sync debug', {
+        type: event.type,
+        subscriptionId,
+        customerId,
+        cancelAtPeriodEnd: Boolean(subscription.cancel_at_period_end),
+        currentPeriodEnd: toIsoFromUnixSeconds(subscription.current_period_end),
+        cancelAt: toIsoFromUnixSeconds(subscription.cancel_at),
+        foundBillingRow: lookup.foundBillingRow,
+        matchedBy: lookup.matchedBy,
+        hasMetadataUserId: Boolean(metadataUserId),
+      });
+
+      if (!resolvedUserId) {
         console.log('[stripe-webhook] subscription user mapping', {
           type: event.type,
           usedLocalFallback,
@@ -323,11 +338,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       const { error } = await supabaseAdmin.from('user_billing').upsert(
         {
-          user_id: userId,
+          user_id: resolvedUserId,
           plan,
           subscription_status: subscriptionStatus,
           stripe_customer_id: customerId,
-          stripe_subscription_id: subscription.id,
+          stripe_subscription_id: subscriptionId,
           cancel_at_period_end: Boolean(subscription.cancel_at_period_end),
           cancel_at: toIsoFromUnixSeconds(subscription.cancel_at),
           current_period_end: toIsoFromUnixSeconds(subscription.current_period_end),

@@ -45,6 +45,10 @@ const Account = () => {
     });
   }, [billingProfile?.cancel_at, billingProfile?.current_period_end]);
 
+  const cancellationScheduled = Boolean(
+    billingProfile?.cancel_at_period_end || billingProfile?.cancel_at
+  );
+
   const overLimit =
     typeof planDetails.savedBriefLimit === 'number' &&
     savedBriefs.length > planDetails.savedBriefLimit;
@@ -123,7 +127,7 @@ const Account = () => {
         savedCount={savedBriefs.length}
         savedLimit={planDetails.savedBriefLimit}
         subscriptionStatus={subscriptionStatus}
-        cancelAtPeriodEnd={Boolean(billingProfile?.cancel_at_period_end)}
+        cancelAtPeriodEnd={cancellationScheduled}
         cancelDateLabel={cancelNoticeDateLabel}
         billingError={billingError}
         showManageBilling={Boolean(billingProfile?.stripe_customer_id)}
