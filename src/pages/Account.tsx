@@ -33,7 +33,7 @@ const Account = () => {
       return null;
     }
 
-    const parsed = new Date(value);
+    const parsed = new Date(value.replace(' ', 'T'));
     if (Number.isNaN(parsed.getTime())) {
       return null;
     }
@@ -45,8 +45,13 @@ const Account = () => {
     });
   }, [billingProfile?.cancel_at, billingProfile?.current_period_end]);
 
+  const isActivePaidPlan =
+    (currentPlan === 'Plus' || currentPlan === 'Pro') && subscriptionStatus === 'active';
+
   const cancellationScheduled = Boolean(
-    billingProfile?.cancel_at_period_end || billingProfile?.cancel_at
+    billingProfile?.cancel_at_period_end ||
+      billingProfile?.cancel_at ||
+      (billingProfile?.current_period_end && subscriptionStatus === 'active')
   );
 
   const overLimit =
@@ -127,7 +132,7 @@ const Account = () => {
         savedCount={savedBriefs.length}
         savedLimit={planDetails.savedBriefLimit}
         subscriptionStatus={subscriptionStatus}
-        cancelAtPeriodEnd={cancellationScheduled}
+        cancelAtPeriodEnd={isActivePaidPlan && cancellationScheduled}
         cancelDateLabel={cancelNoticeDateLabel}
         billingError={billingError}
         showManageBilling={Boolean(billingProfile?.stripe_customer_id)}
