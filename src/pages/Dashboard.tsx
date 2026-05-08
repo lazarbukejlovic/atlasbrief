@@ -312,6 +312,29 @@ const Dashboard = () => {
         </div>
       </section>
 
+      {/* Compare CTA */}
+      <section className="glass-card rounded-[1.75rem] border border-sand/40 p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="text-xs font-semibold uppercase tracking-[0.22em] text-sand">Destination Compare</div>
+            <h2 className="mt-3 text-2xl font-semibold text-navy">Compare destinations side by side</h2>
+            <p className="mt-2 max-w-xl text-sm leading-7 text-navy-muted">
+              Compare readiness, cost, risk, and long-stay fit before choosing where to go. Select 2–3 destinations, pick a travel mode, and get a weighted decision summary.
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2 text-xs text-navy-muted">
+              {['Readiness score', 'Cost comparison', 'Visa friction', 'Safety signals', 'Trust & freshness'].map((label) => (
+                <span key={label} className="rounded-full border border-white/60 bg-white/80 px-2.5 py-1 font-medium text-navy shadow-soft">
+                  {label}
+                </span>
+              ))}
+            </div>
+          </div>
+          <Link to="/compare" className="btn-secondary inline-flex shrink-0 items-center justify-center gap-2 px-6 py-3 text-sm">
+            Compare destinations
+          </Link>
+        </div>
+      </section>
+
       <section className="space-y-5">
         <div className="flex items-end justify-between gap-4">
           <div>

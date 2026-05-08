@@ -7,6 +7,7 @@ const navItems = [
   { to: '/', label: 'Home' },
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/destinations', label: 'Destinations' },
+  { to: '/compare', label: 'Compare' },
   { to: '/watchlist', label: 'Watchlist' },
   { to: '/stay-planner', label: 'Stay Planner' },
   { to: '/saved', label: 'Saved' },
@@ -42,7 +43,7 @@ const Navbar = ({ savedCount }: NavbarProps) => {
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
-                `rounded-full px-4 py-2 text-sm font-medium transition ${
+                `rounded-full px-3 py-2 text-sm font-medium transition ${
                   isActive
                     ? 'bg-white text-navy shadow-soft'
                     : 'text-navy-muted hover:bg-white/70 hover:text-navy'
