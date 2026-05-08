@@ -189,6 +189,11 @@ const Saved = () => {
               {reviewHint ? (
                 <div className="mt-3 rounded-2xl border border-amber-300/80 bg-amber-50/90 p-3 text-sm text-amber-950">
                   <span className="font-semibold">Review before booking.</span> This saved brief is marked {trustMetadata?.freshnessStatus === 'review-soon' ? 'review-soon' : 'stale'} and may need an updated check.
+                  <div className="mt-2">
+                    <Link to={`/alerts?destination=${brief.destination_id}`} className="font-semibold text-amber-900 underline-offset-2 hover:underline">
+                      Review related alerts
+                    </Link>
+                  </div>
                 </div>
               ) : null}
 

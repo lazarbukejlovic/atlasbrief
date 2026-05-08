@@ -1,4 +1,4 @@
-import { Bookmark, Globe2, PlaneTakeoff, Signal } from 'lucide-react';
+import { BellRing, Bookmark, Globe2, PlaneTakeoff, Signal } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAtlasBrief } from '../components/AppLayout';
 import CostIndexChart from '../components/CostIndexChart';
@@ -11,6 +11,7 @@ import { getDestinationTrustMetadata } from '../data/destinationTrust';
 import { getDestinationReadinessScore, destinations as allDestinations } from '../data/destinations';
 import { getRelativeUpdateLabel } from '../data/watchlistSignals';
 import { getRecentIntelligenceUpdates } from '../data/travelIntelligenceUpdates';
+import { useAlerts } from '../hooks/useAlerts';
 import { useStayPlans } from '../hooks/useStayPlans';
 import { useAuth } from '../hooks/useAuth';
 
@@ -18,6 +19,7 @@ const Dashboard = () => {
   const { destinations, savedIds, savedLimit, watchlist, watchlistIds } = useAtlasBrief();
   const { isAuthenticated, currentPlan } = useAuth();
   const { stayPlans } = useStayPlans();
+  const { latestActiveAlerts, unreadCount } = useAlerts();
 
   const savedDestinations = destinations.filter((destination) => savedIds.includes(destination.id));
   const watchlistPreview = watchlist.slice(0, 3);
@@ -245,6 +247,49 @@ const Dashboard = () => {
                     </Link>
                   </div>
                 </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="glass-card rounded-[1.75rem] border border-sand/40 p-6">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <div className="text-xs font-semibold uppercase tracking-[0.22em] text-sand">Travel alerts</div>
+            <h2 className="mt-3 text-3xl font-semibold text-navy">Active alerts across your monitored destinations</h2>
+            <p className="mt-2 text-sm text-navy-muted">
+              Latest unread, watch, and important alerts surfaced from your saved briefs, watchlist, and stay plans.
+            </p>
+          </div>
+          <Link to="/alerts" className="btn-secondary inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm">
+            <BellRing className="h-4 w-4" />
+            Open alerts {unreadCount > 0 ? `(${unreadCount})` : ''}
+          </Link>
+        </div>
+
+        {latestActiveAlerts.length === 0 ? (
+          <div className="mt-6 rounded-2xl border border-white/70 bg-white/80 px-4 py-3 text-sm text-navy-muted">
+            No active alerts right now.
+          </div>
+        ) : (
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
+            {latestActiveAlerts.map((alert) => (
+              <article key={alert.id} className="rounded-2xl border border-white/70 bg-white/85 p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-sky-accent">{alert.destinationName}</p>
+                    <h3 className="mt-1 text-base font-semibold text-navy">{alert.typeLabel}</h3>
+                    <p className="mt-1 text-sm text-navy-muted">{alert.message}</p>
+                    <p className="mt-2 text-xs text-navy-muted">{formatUpdateDate(alert.date)}</p>
+                  </div>
+                  <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${severityClassMap[alert.severity]}`}>
+                    {alert.severity}
+                  </span>
+                </div>
+                <Link to={alert.ctaTo} className="mt-3 inline-flex text-xs font-semibold text-navy hover:text-sky-accent">
+                  {alert.ctaLabel}
+                </Link>
               </article>
             ))}
           </div>

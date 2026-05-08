@@ -5,6 +5,7 @@ import { AuthProvider } from './context/AuthContext';
 import { destinations } from './data/destinations';
 import About from './pages/About';
 import Account from './pages/Account';
+import Alerts from './pages/Alerts';
 import Dashboard from './pages/Dashboard';
 import DestinationDetail from './pages/DestinationDetail';
 import Destinations from './pages/Destinations';
@@ -27,6 +28,7 @@ const App = () => {
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="destinations" element={<Destinations />} />
             <Route path="destinations/:id" element={<DestinationDetail />} />
+            <Route path="alerts" element={<Alerts />} />
             <Route path="saved" element={<Saved />} />
             <Route path="watchlist" element={<Watchlist />} />
             <Route path="stay-planner" element={<StayPlanner />} />

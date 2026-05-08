@@ -777,9 +777,16 @@ const StayPlanner = () => {
                     }
 
                     return (
-                      <div className="flex items-center justify-between rounded-xl bg-white/80 px-3 py-2">
-                        <span className="text-navy-muted">Freshness</span>
-                        <FreshnessBadge freshnessStatus={trust.freshnessStatus} compact />
+                      <div className="rounded-xl bg-white/80 px-3 py-2">
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="text-navy-muted">Freshness</span>
+                          <FreshnessBadge freshnessStatus={trust.freshnessStatus} compact />
+                        </div>
+                        {trust.freshnessStatus !== 'current' ? (
+                          <Link to={`/alerts?destination=${plan.destination_id}`} className="mt-2 inline-flex text-xs font-semibold text-sky-accent hover:text-navy">
+                            Review related alerts
+                          </Link>
+                        ) : null}
                       </div>
                     );
                   })()}

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import FreshnessBadge from '../components/FreshnessBadge';
 import { getDestinationTrustMetadata } from '../data/destinationTrust';
 import { destinations as allDestinations } from '../data/destinations';
+import { getWatchlistSignal } from '../data/watchlistSignals';
 import {
   type CompareMode,
   type CompareResult,
@@ -475,6 +476,18 @@ const Compare = () => {
   const [showTable, setShowTable] = useState(true);
 
   const canCompare = selectedIds.length >= MIN_DESTINATIONS;
+  const activeWatchSignalCount = result
+    ? result.scores.filter((score) => {
+        const watchSignal = getWatchlistSignal(score.destination.id);
+        const trust = getDestinationTrustMetadata(score.destination.id);
+
+        return (
+          watchSignal?.severity === 'Watch' ||
+          watchSignal?.severity === 'Elevated' ||
+          trust?.freshnessStatus === 'stale'
+        );
+      }).length
+    : 0;
 
   const handleCompare = () => {
     const selected = allDestinations.filter((d) => selectedIds.includes(d.id));
@@ -590,6 +603,20 @@ const Compare = () => {
 
           {/* Best match summary */}
           <BestMatchCard result={result} mode={mode} />
+
+          {activeWatchSignalCount > 0 ? (
+            <section className="rounded-[1.5rem] border border-amber-200 bg-amber-50/70 p-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <p className="text-sm text-amber-900">
+                  <span className="font-semibold">{activeWatchSignalCount} destination{activeWatchSignalCount > 1 ? 's have' : ' has'} active watch signals.</span>{' '}
+                  Review alerts before treating the compare result as a booking decision.
+                </p>
+                <Link to="/alerts" className="text-sm font-semibold text-amber-900 hover:text-navy">
+                  Open alerts
+                </Link>
+              </div>
+            </section>
+          ) : null}
 
           {/* Decision insights */}
           <section className="glass-card rounded-[1.75rem] border border-sky-accent/20 p-6 md:p-8">

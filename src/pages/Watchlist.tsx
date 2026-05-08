@@ -35,6 +35,9 @@ const Watchlist = () => {
           <span className="rounded-full bg-white px-3 py-1 font-semibold text-navy shadow-soft">
             Watched destinations: {watchlistIds.length}/{watchlistLimit}
           </span>
+          <Link to="/alerts" className="rounded-full bg-white px-3 py-1 font-semibold text-sky-accent shadow-soft">
+            View related alerts
+          </Link>
           <span className="rounded-full bg-white/80 px-3 py-1">
             Signals are informational and should be checked before booking.
           </span>
@@ -142,9 +145,14 @@ const Watchlist = () => {
               </div>
 
               <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-                <Link to={`/destinations/${item.destination_id}`} className="text-sm font-semibold text-navy hover:text-sky-accent">
-                  Open destination brief
-                </Link>
+                <div className="flex flex-wrap items-center gap-3">
+                  <Link to={`/destinations/${item.destination_id}`} className="text-sm font-semibold text-navy hover:text-sky-accent">
+                    Open destination brief
+                  </Link>
+                  <Link to={`/alerts?destination=${item.destination_id}`} className="text-sm font-semibold text-sky-accent hover:text-navy">
+                    View related alerts
+                  </Link>
+                </div>
                 <button
                   type="button"
                   onClick={() => void removeFromWatchlist(item.destination_id)}
