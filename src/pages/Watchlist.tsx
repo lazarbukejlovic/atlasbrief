@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import EmptyState from '../components/EmptyState';
 import FreshnessBadge from '../components/FreshnessBadge';
+import TripNextStepPanel from '../components/TripNextStepPanel';
 import WhatChangedCard from '../components/WhatChangedCard';
 import { getDestinationTrustMetadata } from '../data/destinationTrust';
 import { getDestinationUpdates } from '../data/travelIntelligenceUpdates';
@@ -58,6 +59,12 @@ const Watchlist = () => {
           {watchlistError}
         </section>
       ) : null}
+
+      <TripNextStepPanel
+        title="External tools for watchlist follow-through"
+        description="Use flight and stay tools externally to monitor availability after reviewing watch signals."
+        categories={['flights', 'stays', 'local-transport']}
+      />
 
       {loadingWatchlist ? (
         <section className="glass-card rounded-[1.75rem] p-6 text-sm text-navy-muted">

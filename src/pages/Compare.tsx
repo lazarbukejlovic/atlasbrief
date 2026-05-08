@@ -2,6 +2,7 @@ import { AlertTriangle, CheckCircle, ChevronDown, Globe2, Info, Layers, RefreshC
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import FreshnessBadge from '../components/FreshnessBadge';
+import TripNextStepPanel from '../components/TripNextStepPanel';
 import { getDestinationTrustMetadata } from '../data/destinationTrust';
 import { destinations as allDestinations } from '../data/destinations';
 import { getWatchlistSignal } from '../data/watchlistSignals';
@@ -617,6 +618,15 @@ const Compare = () => {
               </div>
             </section>
           ) : null}
+
+          <TripNextStepPanel
+            title="Check external availability after your decision"
+            description="Once you choose a direction, compare external stays and flights before purchase."
+            destinationId={result.bestMatch.destination.id}
+            country={result.bestMatch.destination.country}
+            categories={['stays', 'flights', 'insurance']}
+            limit={2}
+          />
 
           {/* Decision insights */}
           <section className="glass-card rounded-[1.75rem] border border-sky-accent/20 p-6 md:p-8">

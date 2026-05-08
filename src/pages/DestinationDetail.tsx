@@ -17,6 +17,7 @@ import DataFreshnessTimeline from '../components/DataFreshnessTimeline';
 import WhatChangedCard from '../components/WhatChangedCard';
 import TrustScoreCard from '../components/TrustScoreCard';
 import SourcePolicyNotice from '../components/SourcePolicyNotice';
+import TripNextStepPanel from '../components/TripNextStepPanel';
 import { getDestinationTrustMetadata } from '../data/destinationTrust';
 import { getDestinationUpdates } from '../data/travelIntelligenceUpdates';
 import { getDestinationById } from '../data/destinations';
@@ -182,6 +183,14 @@ const DestinationDetail = () => {
           </div>
         </section>
       ) : null}
+
+      <TripNextStepPanel
+        title="Useful external tools after readiness review"
+        description="Explore stays, flight options, and entry support externally after validating destination readiness."
+        destinationId={destination.id}
+        country={destination.country}
+        categories={['stays', 'flights', 'visa-entry-help']}
+      />
 
       <SourceFreshnessPanel
         lastChecked={destination.lastChecked}

@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import {
   CalendarDays,
   ChevronRight,
-  Globe2,
   Wifi,
   Home,
   ShieldCheck,
@@ -26,6 +25,7 @@ import { useStayPlans } from '../hooks/useStayPlans';
 import FreshnessBadge from '../components/FreshnessBadge';
 import SourceConfidenceCard from '../components/SourceConfidenceCard';
 import SourcePolicyNotice from '../components/SourcePolicyNotice';
+import TripNextStepPanel from '../components/TripNextStepPanel';
 import {
   computeFeasibilityReport,
   budgetRangeLabels,
@@ -490,6 +490,7 @@ const StayPlanner = () => {
   }, [inputs]);
 
   const destinationOptions = destinations.map((d) => ({ value: d.id, label: `${d.city}, ${d.country}` }));
+  const selectedDestination = report?.destination ?? destinations.find((destination) => destination.id === inputs.destinationId);
 
   const formatPlanDate = (value: string) => {
     const parsed = new Date(value.replace(' ', 'T'));
@@ -521,6 +522,14 @@ const StayPlanner = () => {
           <span className="rounded-full bg-white/80 px-3 py-1">All 8 current destinations supported</span>
         </div>
       </section>
+
+      <TripNextStepPanel
+        title="Next steps for longer stays"
+        description="After feasibility review, compare external long-stay housing, insurance, and remote-work tools."
+        destinationId={selectedDestination?.id}
+        country={selectedDestination?.country}
+        categories={['remote-work-tools', 'insurance', 'stays']}
+      />
 
       {/* Form */}
       <section className="glass-card rounded-[2rem] p-8">

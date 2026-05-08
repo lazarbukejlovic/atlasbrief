@@ -5,6 +5,7 @@ import { useAuth } from '../hooks/useAuth';
 import UserPlanBadge from '../components/UserPlanBadge';
 import ReadinessStatusBadge from '../components/ReadinessStatusBadge';
 import FreshnessBadge from '../components/FreshnessBadge';
+import TripNextStepPanel from '../components/TripNextStepPanel';
 import { getDestinationById } from '../data/destinations';
 import { getDestinationTrustMetadata, getFreshnessReviewHint } from '../data/destinationTrust';
 import {
@@ -210,6 +211,12 @@ const Saved = () => {
           ))}
         </section>
       )}
+
+      <TripNextStepPanel
+        title="Useful external tools for saved plans"
+        description="After reviewing saved readiness briefs, compare external insurance, stays, and flight options."
+        categories={['insurance', 'stays', 'flights']}
+      />
     </div>
   );
 };
