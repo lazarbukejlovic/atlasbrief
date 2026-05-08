@@ -11,6 +11,14 @@ import TravelChecklist from '../components/TravelChecklist';
 import TripReadinessBrief from '../components/TripReadinessBrief';
 import WhatChangedPanel from '../components/WhatChangedPanel';
 import SourceFreshnessPanel from '../components/SourceFreshnessPanel';
+import LastCheckedPanel from '../components/LastCheckedPanel';
+import SourceConfidenceCard from '../components/SourceConfidenceCard';
+import DataFreshnessTimeline from '../components/DataFreshnessTimeline';
+import WhatChangedCard from '../components/WhatChangedCard';
+import TrustScoreCard from '../components/TrustScoreCard';
+import SourcePolicyNotice from '../components/SourcePolicyNotice';
+import { getDestinationTrustMetadata } from '../data/destinationTrust';
+import { getDestinationUpdates } from '../data/travelIntelligenceUpdates';
 import { getDestinationById } from '../data/destinations';
 import { useAuth } from '../hooks/useAuth';
 
@@ -34,6 +42,9 @@ const DestinationDetail = () => {
   if (!destination) {
     return <Navigate to="/destinations" replace />;
   }
+
+  const trustMetadata = getDestinationTrustMetadata(destination.id);
+  const trustUpdates = getDestinationUpdates(destination.id, 4);
 
   const saved = isSaved(destination.id);
   const watched = isWatched(destination.id);
@@ -146,6 +157,31 @@ const DestinationDetail = () => {
       </section>
 
       <WhatChangedPanel whatChanged={destination.whatChanged} />
+
+      {trustMetadata ? (
+        <section className="mt-8 glass-card rounded-[1.75rem] p-6">
+          <div className="text-xs font-semibold uppercase tracking-[0.22em] text-sky-accent">Trust & Freshness</div>
+          <h2 className="mt-3 text-3xl font-semibold text-navy">Planning confidence for this destination</h2>
+
+          <div className="mt-6 grid gap-4 lg:grid-cols-3">
+            <LastCheckedPanel metadata={trustMetadata} />
+            <SourceConfidenceCard metadata={trustMetadata} />
+            <TrustScoreCard metadata={trustMetadata} />
+          </div>
+
+          <div className="mt-4 grid gap-4 lg:grid-cols-2">
+            <DataFreshnessTimeline metadata={trustMetadata} />
+            <WhatChangedCard
+              updates={trustUpdates}
+              emptyMessage="No recent static changes were logged for this destination."
+            />
+          </div>
+
+          <div className="mt-4">
+            <SourcePolicyNotice />
+          </div>
+        </section>
+      ) : null}
 
       <SourceFreshnessPanel
         lastChecked={destination.lastChecked}

@@ -20,8 +20,12 @@ import {
 } from 'lucide-react';
 import { destinations } from '../data/destinations';
 import { getLongStayData } from '../data/longStayData';
+import { getDestinationTrustMetadata } from '../data/destinationTrust';
 import { useAuth } from '../hooks/useAuth';
 import { useStayPlans } from '../hooks/useStayPlans';
+import FreshnessBadge from '../components/FreshnessBadge';
+import SourceConfidenceCard from '../components/SourceConfidenceCard';
+import SourcePolicyNotice from '../components/SourcePolicyNotice';
 import {
   computeFeasibilityReport,
   budgetRangeLabels,
@@ -164,6 +168,7 @@ function ScoreRow({ label, value }: { label: string; value: number }) {
 
 function FeasibilityReport({ report }: { report: StayFeasibilityReport }) {
   const { destination, longStay, inputs } = report;
+  const trustMetadata = getDestinationTrustMetadata(destination.id);
   const recMeta = recommendationMeta[report.finalRecommendation];
   const visaShortfall = longStay.maxVisaFreeDays < inputs.stayLength;
 
@@ -210,6 +215,30 @@ function FeasibilityReport({ report }: { report: StayFeasibilityReport }) {
             </p>
           </div>
         </div>
+
+        {trustMetadata ? (
+          <div className="mt-5 rounded-2xl border border-white/70 bg-white/80 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-navy-muted">Report freshness</p>
+                <p className="mt-1 text-sm text-navy-muted">
+                  Last checked {new Date(trustMetadata.lastCheckedAt).toLocaleDateString(undefined, {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}
+                </p>
+              </div>
+              <FreshnessBadge freshnessStatus={trustMetadata.freshnessStatus} />
+            </div>
+            <p className="mt-3 text-xs leading-6 text-navy-muted">
+              Cost and requirement sections are static planning estimates for product evaluation and should be verified with official sources before booking.
+            </p>
+            <div className="mt-3">
+              <SourceConfidenceCard metadata={trustMetadata} />
+            </div>
+          </div>
+        ) : null}
 
         {/* Recommendation */}
         <div className={`mt-6 rounded-2xl border p-5 ${recMeta.bg} ${recMeta.border}`}>
@@ -394,6 +423,8 @@ function FeasibilityReport({ report }: { report: StayFeasibilityReport }) {
       <div className="rounded-2xl border border-white/60 bg-white/60 px-5 py-4 text-xs leading-6 text-navy-muted">
         <span className="font-semibold text-navy">Planning snapshot only.</span> Rules and local conditions can change. Verify visa, entry, tax, and insurance requirements with official sources before booking. Cost estimates are static and do not reflect real-time market data.
       </div>
+
+      <SourcePolicyNotice compact />
     </div>
   );
 }
@@ -739,6 +770,19 @@ const StayPlanner = () => {
                     <span className="text-navy-muted">Recommendation</span>
                     <span className="font-semibold capitalize text-navy">{plan.recommendation.replace(/-/g, ' ')}</span>
                   </div>
+                  {(() => {
+                    const trust = getDestinationTrustMetadata(plan.destination_id);
+                    if (!trust) {
+                      return null;
+                    }
+
+                    return (
+                      <div className="flex items-center justify-between rounded-xl bg-white/80 px-3 py-2">
+                        <span className="text-navy-muted">Freshness</span>
+                        <FreshnessBadge freshnessStatus={trust.freshnessStatus} compact />
+                      </div>
+                    );
+                  })()}
                 </div>
               </article>
             ))}

@@ -112,6 +112,29 @@ const About = () => {
           </p>
         </div>
       </section>
+
+      <section className="glass-card rounded-[2rem] p-8">
+        <div className="text-xs font-semibold uppercase tracking-[0.22em] text-sky-accent">Data & Trust</div>
+        <h2 className="mt-3 text-3xl font-semibold text-navy">How AtlasBrief handles planning confidence</h2>
+        <div className="mt-5 grid gap-4 md:grid-cols-2">
+          <div className="rounded-2xl border border-white/70 bg-white/80 p-4 text-sm text-navy-muted">
+            <p className="font-semibold text-navy">Planning snapshots</p>
+            <p className="mt-2 leading-7">AtlasBrief presents trip-readiness snapshots with clear freshness indicators to support planning decisions.</p>
+          </div>
+          <div className="rounded-2xl border border-white/70 bg-white/80 p-4 text-sm text-navy-muted">
+            <p className="font-semibold text-navy">Official verification required</p>
+            <p className="mt-2 leading-7">Always verify visa, entry, tax, insurance, and safety requirements with official sources before booking.</p>
+          </div>
+          <div className="rounded-2xl border border-white/70 bg-white/80 p-4 text-sm text-navy-muted">
+            <p className="font-semibold text-navy">Estimated cost layers</p>
+            <p className="mt-2 leading-7">Cost and long-stay estimates are informational and static in this phase, designed for readiness comparison rather than checkout accuracy.</p>
+          </div>
+          <div className="rounded-2xl border border-white/70 bg-white/80 p-4 text-sm text-navy-muted">
+            <p className="font-semibold text-navy">Roadmap direction</p>
+            <p className="mt-2 leading-7">Future provider-grade integrations may include Timatic/Sherpa-style requirement layers, but those feeds are not active in this release.</p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

@@ -4,10 +4,13 @@ import { useAtlasBrief } from '../components/AppLayout';
 import CostIndexChart from '../components/CostIndexChart';
 import CurrencyWatch from '../components/CurrencyWatch';
 import DashboardCard from '../components/DashboardCard';
+import FreshnessBadge from '../components/FreshnessBadge';
 import TripProfileCard from '../components/TripProfileCard';
 import UserPlanBadge from '../components/UserPlanBadge';
+import { getDestinationTrustMetadata } from '../data/destinationTrust';
 import { getDestinationReadinessScore, destinations as allDestinations } from '../data/destinations';
 import { getRelativeUpdateLabel } from '../data/watchlistSignals';
+import { getRecentIntelligenceUpdates } from '../data/travelIntelligenceUpdates';
 import { useStayPlans } from '../hooks/useStayPlans';
 import { useAuth } from '../hooks/useAuth';
 
@@ -29,6 +32,10 @@ const Dashboard = () => {
     (left, right) => left.monthlyCostEstimate - right.monthlyCostEstimate
   )[0];
   const recentStayPlans = stayPlans.slice(0, 3);
+  const intelligenceSourceIds = Array.from(
+    new Set([...watchlist.map((item) => item.destination_id), ...savedDestinations.map((destination) => destination.id)])
+  );
+  const recentIntelligence = getRecentIntelligenceUpdates(intelligenceSourceIds, 5);
 
   const formatPlanDate = (value: string) => {
     const parsed = new Date(value.replace(' ', 'T'));
@@ -40,6 +47,24 @@ const Dashboard = () => {
       month: 'short',
       day: 'numeric',
     });
+  };
+
+  const formatUpdateDate = (value: string) => {
+    const parsed = new Date(value.replace(' ', 'T'));
+    if (Number.isNaN(parsed.getTime())) {
+      return 'Unknown date';
+    }
+
+    return parsed.toLocaleDateString(undefined, {
+      month: 'short',
+      day: 'numeric',
+    });
+  };
+
+  const severityClassMap = {
+    info: 'bg-sky-soft text-navy',
+    watch: 'bg-amber-100 text-amber-900',
+    important: 'bg-rose-100 text-rose-900',
   };
 
   return (
@@ -159,6 +184,67 @@ const Dashboard = () => {
                 <h3 className="mt-2 text-lg font-semibold text-navy">{item.destination_name}</h3>
                 <p className="mt-3 text-sm text-navy-muted">{item.safety_signal}</p>
                 <p className="mt-2 text-xs text-navy-muted">{item.last_updated_label}</p>
+                {(() => {
+                  const trust = getDestinationTrustMetadata(item.destination_id);
+                  return trust ? (
+                    <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+                      <FreshnessBadge freshnessStatus={trust.freshnessStatus} compact />
+                      <span className="text-[11px] text-navy-muted">
+                        Next review: {new Date(trust.nextReviewDue).toLocaleDateString(undefined, {
+                          month: 'short',
+                          day: 'numeric',
+                        })}
+                      </span>
+                    </div>
+                  ) : null;
+                })()}
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="glass-card rounded-[1.75rem] border border-sky-accent/20 p-6">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <div className="text-xs font-semibold uppercase tracking-[0.22em] text-sky-accent">Travel Intelligence Updates</div>
+            <h2 className="mt-3 text-3xl font-semibold text-navy">What changed since last check</h2>
+            <p className="mt-2 text-sm text-navy-muted">
+              Static demo update feed across your watched and saved destinations.
+            </p>
+          </div>
+          <Link to="/watchlist" className="btn-secondary inline-flex items-center justify-center px-5 py-2.5 text-sm">
+            Open Watchlist
+          </Link>
+        </div>
+
+        {recentIntelligence.length === 0 ? (
+          <div className="mt-6 rounded-2xl border border-white/70 bg-white/80 px-4 py-3 text-sm text-navy-muted">
+            No recent intelligence updates yet.
+          </div>
+        ) : (
+          <div className="mt-6 space-y-3">
+            {recentIntelligence.map((update) => (
+              <article key={update.id} className="rounded-2xl border border-white/70 bg-white/85 p-4">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-sky-accent">{update.destinationName}</p>
+                    <h3 className="mt-1 text-base font-semibold text-navy">{update.changeType}</h3>
+                    <p className="mt-1 text-sm text-navy-muted">{update.message}</p>
+                    <p className="mt-2 text-xs text-navy-muted">{formatUpdateDate(update.date)}</p>
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${severityClassMap[update.severity]}`}>
+                      {update.severity}
+                    </span>
+                    <Link
+                      to={`/destinations/${update.destinationId}`}
+                      className="text-xs font-semibold text-navy hover:text-sky-accent"
+                    >
+                      Open destination
+                    </Link>
+                  </div>
+                </div>
               </article>
             ))}
           </div>

@@ -1,5 +1,9 @@
 import { Link } from 'react-router-dom';
 import EmptyState from '../components/EmptyState';
+import FreshnessBadge from '../components/FreshnessBadge';
+import WhatChangedCard from '../components/WhatChangedCard';
+import { getDestinationTrustMetadata } from '../data/destinationTrust';
+import { getDestinationUpdates } from '../data/travelIntelligenceUpdates';
 import { useAtlasBrief } from '../components/AppLayout';
 
 const severityClasses: Record<string, string> = {
@@ -65,7 +69,11 @@ const Watchlist = () => {
         />
       ) : (
         <section className="grid gap-6 xl:grid-cols-2">
-          {watchlist.map((item) => (
+          {watchlist.map((item) => {
+            const trustMetadata = getDestinationTrustMetadata(item.destination_id);
+            const changes = getDestinationUpdates(item.destination_id, 3);
+
+            return (
             <article key={item.id ?? item.destination_id} className="glass-card rounded-[1.75rem] p-6 shadow-soft">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
@@ -78,6 +86,9 @@ const Watchlist = () => {
                     {item.severity.charAt(0).toUpperCase() + item.severity.slice(1)}
                   </span>
                   <span className="text-xs text-navy-muted">{item.last_updated_label}</span>
+                  {trustMetadata ? (
+                    <FreshnessBadge freshnessStatus={trustMetadata.freshnessStatus} compact />
+                  ) : null}
                 </div>
               </div>
 
@@ -109,6 +120,25 @@ const Watchlist = () => {
                   <p className="text-xs uppercase tracking-[0.16em] text-navy-muted">Local rules / visa note</p>
                   <p className="mt-2 text-sm text-navy-muted">{item.local_rules_note}</p>
                 </div>
+                {trustMetadata ? (
+                  <div className="rounded-2xl border border-white/70 bg-white/85 p-4">
+                    <p className="text-xs uppercase tracking-[0.16em] text-navy-muted">Next review due</p>
+                    <p className="mt-2 text-sm text-navy-muted">
+                      {new Date(trustMetadata.nextReviewDue).toLocaleDateString(undefined, {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}
+                    </p>
+                  </div>
+                ) : null}
+              </div>
+
+              <div className="mt-4">
+                <WhatChangedCard
+                  updates={changes}
+                  emptyMessage="No recent static update preview for this destination."
+                />
               </div>
 
               <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
@@ -124,7 +154,7 @@ const Watchlist = () => {
                 </button>
               </div>
             </article>
-          ))}
+          )})}
         </section>
       )}
     </div>

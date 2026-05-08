@@ -1,3 +1,6 @@
+import type { ConfidenceLevel, FreshnessStatus, SourceTier } from './destinationTrust';
+import { getDestinationTrustMetadata } from './destinationTrust';
+
 export type Region =
   | 'Europe'
   | 'Asia'
@@ -42,6 +45,17 @@ export interface Destination {
   whatChanged: string[];
   sourceHierarchy: string;
   advisoryNote: string;
+  lastCheckedAt?: string;
+  nextReviewDue?: string;
+  sourceTier?: SourceTier;
+  sourceSummary?: string;
+  sourceNotes?: string[];
+  freshnessStatus?: FreshnessStatus;
+  confidenceLevel?: ConfidenceLevel;
+  advisoryUpdatedAt?: string;
+  costDataUpdatedAt?: string;
+  fxDataUpdatedAt?: string;
+  requirementsUpdatedAt?: string;
 }
 
 export const destinations: Destination[] = [
@@ -449,6 +463,25 @@ export const destinations: Destination[] = [
 
 export const getDestinationById = (id: string) =>
   destinations.find((destination) => destination.id === id);
+
+destinations.forEach((destination) => {
+  const metadata = getDestinationTrustMetadata(destination.id);
+  if (!metadata) {
+    return;
+  }
+
+  destination.lastCheckedAt = metadata.lastCheckedAt;
+  destination.nextReviewDue = metadata.nextReviewDue;
+  destination.sourceTier = metadata.sourceTier;
+  destination.sourceSummary = metadata.sourceSummary;
+  destination.sourceNotes = metadata.sourceNotes;
+  destination.freshnessStatus = metadata.freshnessStatus;
+  destination.confidenceLevel = metadata.confidenceLevel;
+  destination.advisoryUpdatedAt = metadata.advisoryUpdatedAt;
+  destination.costDataUpdatedAt = metadata.costDataUpdatedAt;
+  destination.fxDataUpdatedAt = metadata.fxDataUpdatedAt;
+  destination.requirementsUpdatedAt = metadata.requirementsUpdatedAt;
+});
 
 export const getDestinationReadinessScore = (destination: Destination) =>
   Math.round((destination.safetyScore + destination.internetScore + destination.transportScore) / 3);

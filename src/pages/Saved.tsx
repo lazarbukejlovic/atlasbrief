@@ -4,7 +4,9 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import UserPlanBadge from '../components/UserPlanBadge';
 import ReadinessStatusBadge from '../components/ReadinessStatusBadge';
+import FreshnessBadge from '../components/FreshnessBadge';
 import { getDestinationById } from '../data/destinations';
+import { getDestinationTrustMetadata, getFreshnessReviewHint } from '../data/destinationTrust';
 import {
   getRelativeUpdateLabel,
   getWatchlistSignal,
@@ -75,6 +77,10 @@ const Saved = () => {
               {(() => {
                 const signal = getWatchlistSignal(brief.destination_id);
                 const destination = getDestinationById(brief.destination_id);
+                const trustMetadata = getDestinationTrustMetadata(brief.destination_id);
+                const reviewHint = trustMetadata
+                  ? getFreshnessReviewHint(trustMetadata.freshnessStatus)
+                  : null;
                 const relativeUpdated = signal
                   ? getRelativeUpdateLabel(signal.updatedAt)
                   : getRelativeUpdateLabel(brief.last_checked);
@@ -94,6 +100,9 @@ const Saved = () => {
                     status={brief.readiness_status as 'Ready' | 'Review' | 'Watch Closely'}
                     size="sm"
                   />
+                  {trustMetadata ? (
+                    <FreshnessBadge freshnessStatus={trustMetadata.freshnessStatus} compact />
+                  ) : null}
                   {signal ? (
                     <span className={`rounded-full px-3 py-1 text-xs font-semibold ${severityBadgeClass[signal.severity]}`}>
                       {signal.severity}
@@ -157,6 +166,31 @@ const Saved = () => {
                 <p className="text-xs uppercase tracking-[0.16em] text-sky-accent">What changed</p>
                 <p className="mt-1 text-sm text-navy-muted">{brief.what_changed}</p>
               </div>
+
+              {trustMetadata ? (
+                <div className="mt-3 rounded-2xl border border-white/70 bg-white/85 p-3">
+                  <p className="text-xs uppercase tracking-[0.16em] text-navy-muted">Freshness checks</p>
+                  <p className="mt-1 text-sm text-navy-muted">
+                    Last checked: {new Date(trustMetadata.lastCheckedAt).toLocaleDateString(undefined, {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })}
+                  </p>
+                  <p className="mt-1 text-sm text-navy-muted">
+                    Next review due: {new Date(trustMetadata.nextReviewDue).toLocaleDateString(undefined, {
+                      month: 'short',
+                      day: 'numeric',
+                    })}
+                  </p>
+                </div>
+              ) : null}
+
+              {reviewHint ? (
+                <div className="mt-3 rounded-2xl border border-amber-300/80 bg-amber-50/90 p-3 text-sm text-amber-950">
+                  <span className="font-semibold">Review before booking.</span> This saved brief is marked {trustMetadata?.freshnessStatus === 'review-soon' ? 'review-soon' : 'stale'} and may need an updated check.
+                </div>
+              ) : null}
 
               <Link
                 to={`/destinations/${brief.destination_id}`}
