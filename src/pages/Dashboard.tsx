@@ -8,11 +8,13 @@ import TripProfileCard from '../components/TripProfileCard';
 import UserPlanBadge from '../components/UserPlanBadge';
 import { getDestinationReadinessScore, destinations as allDestinations } from '../data/destinations';
 import { getRelativeUpdateLabel } from '../data/watchlistSignals';
+import { useStayPlans } from '../hooks/useStayPlans';
 import { useAuth } from '../hooks/useAuth';
 
 const Dashboard = () => {
   const { destinations, savedIds, savedLimit, watchlist, watchlistIds } = useAtlasBrief();
   const { isAuthenticated, currentPlan } = useAuth();
+  const { stayPlans } = useStayPlans();
 
   const savedDestinations = destinations.filter((destination) => savedIds.includes(destination.id));
   const watchlistPreview = watchlist.slice(0, 3);
@@ -26,6 +28,19 @@ const Dashboard = () => {
   const leanestDestination = [...destinations].sort(
     (left, right) => left.monthlyCostEstimate - right.monthlyCostEstimate
   )[0];
+  const recentStayPlans = stayPlans.slice(0, 3);
+
+  const formatPlanDate = (value: string) => {
+    const parsed = new Date(value.replace(' ', 'T'));
+    if (Number.isNaN(parsed.getTime())) {
+      return 'Unknown date';
+    }
+
+    return parsed.toLocaleDateString(undefined, {
+      month: 'short',
+      day: 'numeric',
+    });
+  };
 
   return (
     <div className="space-y-8">
@@ -144,6 +159,44 @@ const Dashboard = () => {
                 <h3 className="mt-2 text-lg font-semibold text-navy">{item.destination_name}</h3>
                 <p className="mt-3 text-sm text-navy-muted">{item.safety_signal}</p>
                 <p className="mt-2 text-xs text-navy-muted">{item.last_updated_label}</p>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="glass-card rounded-[1.75rem] border border-sky-accent/20 p-6">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <div className="text-xs font-semibold uppercase tracking-[0.22em] text-sky-accent">Recent stay plans</div>
+            <h2 className="mt-3 text-3xl font-semibold text-navy">Latest long-stay feasibility snapshots</h2>
+            <p className="mt-2 text-sm text-navy-muted">
+              Saved 30–90 day feasibility assessments for your planning workspace.
+            </p>
+          </div>
+          <Link to="/stay-planner" className="btn-secondary inline-flex items-center justify-center px-5 py-2.5 text-sm">
+            Open Stay Planner
+          </Link>
+        </div>
+
+        {!isAuthenticated ? (
+          <div className="mt-6 rounded-2xl border border-sky-accent/20 bg-sky-50/70 px-4 py-3 text-sm text-navy-muted">
+            Sign in to save and view stay plans across devices.
+          </div>
+        ) : recentStayPlans.length === 0 ? (
+          <div className="mt-6 rounded-2xl border border-white/70 bg-white/80 px-4 py-3 text-sm text-navy-muted">
+            No saved stay plans yet.
+          </div>
+        ) : (
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
+            {recentStayPlans.map((plan) => (
+              <article key={plan.id} className="rounded-2xl border border-white/70 bg-white/80 p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-accent">{plan.country}</p>
+                <h3 className="mt-2 text-lg font-semibold text-navy">{plan.destination_name}</h3>
+                <p className="mt-2 text-sm text-navy-muted">{plan.stay_length_days} day stay</p>
+                <p className="mt-1 text-sm text-navy-muted">Score: {plan.feasibility_score}/100</p>
+                <p className="mt-1 text-xs capitalize text-navy-muted">{plan.recommendation.replace(/-/g, ' ')}</p>
+                <p className="mt-3 text-xs text-navy-muted">Saved {formatPlanDate(plan.created_at)}</p>
               </article>
             ))}
           </div>

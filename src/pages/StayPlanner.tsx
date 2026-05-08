@@ -15,10 +15,13 @@ import {
   AlertTriangle,
   TrendingUp,
   Info,
+  Save,
+  Trash2,
 } from 'lucide-react';
-import { useAtlasBrief } from '../components/AppLayout';
 import { destinations } from '../data/destinations';
 import { getLongStayData } from '../data/longStayData';
+import { useAuth } from '../hooks/useAuth';
+import { useStayPlans } from '../hooks/useStayPlans';
 import {
   computeFeasibilityReport,
   budgetRangeLabels,
@@ -408,6 +411,18 @@ const defaultInputs: StayPlannerInputs = {
 };
 
 const StayPlanner = () => {
+  const { isAuthenticated } = useAuth();
+  const {
+    stayPlans,
+    loading: loadingStayPlans,
+    saving,
+    error: stayPlanError,
+    saveMessage,
+    limitWarning,
+    stayPlanLimit,
+    saveStayPlan,
+    removeStayPlan,
+  } = useStayPlans();
   const [inputs, setInputs] = useState<StayPlannerInputs>(defaultInputs);
   const [report, setReport] = useState<StayFeasibilityReport | null>(null);
   const [generating, setGenerating] = useState(false);
@@ -444,6 +459,19 @@ const StayPlanner = () => {
   }, [inputs]);
 
   const destinationOptions = destinations.map((d) => ({ value: d.id, label: `${d.city}, ${d.country}` }));
+
+  const formatPlanDate = (value: string) => {
+    const parsed = new Date(value.replace(' ', 'T'));
+    if (Number.isNaN(parsed.getTime())) {
+      return 'Unknown date';
+    }
+
+    return parsed.toLocaleDateString(undefined, {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  };
 
   return (
     <div className="space-y-8">
@@ -594,7 +622,129 @@ const StayPlanner = () => {
       )}
 
       {/* Report */}
-      {report && <FeasibilityReport report={report} />}
+      {report && (
+        <div className="space-y-5">
+          <FeasibilityReport report={report} />
+
+          <section className="glass-card rounded-[1.75rem] p-6">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <div className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-accent">Save this plan</div>
+                <h3 className="mt-2 text-lg font-semibold text-navy">Save stay plan for later</h3>
+                <p className="mt-2 text-sm text-navy-muted">
+                  Save this long-stay feasibility report to view it across devices.
+                </p>
+              </div>
+              {isAuthenticated ? (
+                <button
+                  type="button"
+                  onClick={() => void saveStayPlan(report)}
+                  disabled={saving}
+                  className="btn-primary inline-flex items-center gap-2 px-5 py-2.5 text-sm disabled:opacity-60"
+                >
+                  <Save className="h-4 w-4" />
+                  {saving ? 'Saving...' : 'Save stay plan'}
+                </button>
+              ) : (
+                <Link to="/login" className="btn-secondary px-5 py-2.5 text-sm">
+                  Log in to save
+                </Link>
+              )}
+            </div>
+
+            {!isAuthenticated ? (
+              <div className="mt-4 rounded-2xl border border-sky-accent/20 bg-sky-50/70 px-4 py-3 text-sm text-navy-muted">
+                Log in to save this stay plan across devices.
+              </div>
+            ) : null}
+
+            {saveMessage ? (
+              <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+                {saveMessage}
+              </div>
+            ) : null}
+
+            {limitWarning ? (
+              <div className="mt-4 rounded-2xl border border-amber-300/80 bg-amber-50/90 px-4 py-3 text-sm text-amber-950">
+                {limitWarning}
+              </div>
+            ) : null}
+
+            {stayPlanError ? (
+              <div className="mt-4 rounded-2xl border border-amber-300/80 bg-amber-50/90 px-4 py-3 text-sm text-amber-950">
+                {stayPlanError}
+              </div>
+            ) : null}
+
+            {isAuthenticated ? (
+              <p className="mt-4 text-xs text-navy-muted">Saved stay plans: {stayPlans.length}/{stayPlanLimit}</p>
+            ) : null}
+          </section>
+        </div>
+      )}
+
+      <section className="glass-card rounded-[1.75rem] p-6">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <div className="text-xs font-semibold uppercase tracking-[0.22em] text-sky-accent">Saved stay plans</div>
+            <h2 className="mt-3 text-2xl font-semibold text-navy">Latest saved stay plans</h2>
+            <p className="mt-2 text-sm text-navy-muted">
+              Reopen your saved long-stay feasibility snapshots anytime.
+            </p>
+          </div>
+        </div>
+
+        {!isAuthenticated ? (
+          <div className="mt-6 rounded-2xl border border-sky-accent/20 bg-sky-50/70 px-4 py-3 text-sm text-navy-muted">
+            Log in to save this stay plan across devices.
+          </div>
+        ) : loadingStayPlans ? (
+          <div className="mt-6 rounded-2xl border border-white/70 bg-white/80 px-4 py-3 text-sm text-navy-muted">
+            Loading saved stay plans...
+          </div>
+        ) : stayPlans.length === 0 ? (
+          <div className="mt-6 rounded-2xl border border-white/70 bg-white/80 px-4 py-3 text-sm text-navy-muted">
+            No saved stay plans yet.
+          </div>
+        ) : (
+          <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {stayPlans.map((plan) => (
+              <article key={plan.id} className="rounded-2xl border border-white/70 bg-white/80 p-4 shadow-soft">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-sky-accent">{plan.country}</p>
+                    <h3 className="mt-1.5 text-lg font-semibold text-navy">{plan.destination_name}</h3>
+                    <p className="mt-1 text-xs text-navy-muted">Saved {formatPlanDate(plan.created_at)}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => void removeStayPlan(plan.id)}
+                    className="rounded-xl border border-white/70 bg-white px-2.5 py-2 text-navy-muted transition hover:text-navy"
+                    aria-label="Remove saved stay plan"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+
+                <div className="mt-4 grid gap-2 text-sm">
+                  <div className="flex items-center justify-between rounded-xl bg-white/80 px-3 py-2">
+                    <span className="text-navy-muted">Stay length</span>
+                    <span className="font-semibold text-navy">{plan.stay_length_days} days</span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-xl bg-white/80 px-3 py-2">
+                    <span className="text-navy-muted">Score</span>
+                    <span className="font-semibold text-navy">{plan.feasibility_score}/100</span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-xl bg-white/80 px-3 py-2">
+                    <span className="text-navy-muted">Recommendation</span>
+                    <span className="font-semibold capitalize text-navy">{plan.recommendation.replace(/-/g, ' ')}</span>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 };
