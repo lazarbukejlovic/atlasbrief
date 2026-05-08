@@ -1,6 +1,7 @@
 import { Mail, ShieldCheck } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import AccountPlanCard from '../components/AccountPlanCard';
+import ComingSoonBadge from '../components/ComingSoonBadge';
 import { useAtlasBrief } from '../components/AppLayout';
 import { useAuth } from '../hooks/useAuth';
 import { openBillingPortal, startPlusCheckout } from '../lib/billing';
@@ -151,6 +152,27 @@ const Account = () => {
         onManageBilling={() => void handleManageBilling()}
         onUpgrade={() => void handleUpgrade()}
       />
+
+      {(currentPlan === 'Free' || currentPlan === 'Plus') ? (
+        <section className="glass-card rounded-[1.75rem] border border-sand/40 p-6">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-sand">Pro preview</div>
+              <h2 className="mt-2 text-2xl font-semibold text-navy">Need more than Plus?</h2>
+              <p className="mt-2 text-sm text-navy-muted">
+                Pro will add family sharing, 20 saved trips, and advanced readiness exports.
+              </p>
+            </div>
+            <ComingSoonBadge />
+          </div>
+
+          <div className="mt-4">
+            <a href="/pro" className="inline-flex rounded-2xl border border-white/70 bg-white px-5 py-2.5 text-sm font-semibold text-navy shadow-soft transition hover:bg-white/80">
+              Preview Pro
+            </a>
+          </div>
+        </section>
+      ) : null}
 
       {overLimit ? (
         <section className="rounded-2xl border border-amber-300/80 bg-amber-50/90 px-4 py-3 text-sm text-amber-950">

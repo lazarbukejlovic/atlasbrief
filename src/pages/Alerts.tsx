@@ -279,6 +279,17 @@ const Alerts = () => {
           </p>
         </div>
       </section>
+
+      <section className="rounded-[1.5rem] border border-sand/40 bg-white/80 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-navy-muted">
+            <span className="font-semibold text-navy">Advanced monitoring - Pro preview.</span> Expanded monitoring workflows are planned in Pro while current alerts remain fully available.
+          </p>
+          <Link to="/pro" className="text-sm font-semibold text-navy hover:text-sky-accent">
+            View Pro preview
+          </Link>
+        </div>
+      </section>
     </div>
   );
 };

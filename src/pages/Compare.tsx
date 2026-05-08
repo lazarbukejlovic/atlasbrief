@@ -582,6 +582,17 @@ const Compare = () => {
               Run comparison
             </button>
           </section>
+
+          <section className="rounded-[1.5rem] border border-sand/40 bg-white/80 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="text-sm text-navy-muted">
+                <span className="font-semibold text-navy">Compare history - Pro preview.</span> Current compare remains available; Pro will expand saved comparison history over time.
+              </p>
+              <Link to="/pro" className="text-sm font-semibold text-navy hover:text-sky-accent">
+                View Pro preview
+              </Link>
+            </div>
+          </section>
         </>
       ) : (
         <>
@@ -697,6 +708,17 @@ const Compare = () => {
                 <span className="font-semibold text-navy">Planning snapshot only.</span>{' '}
                 AtlasBrief provides planning snapshots, not legal or immigration advice. Verify entry, visa, tax, insurance, and safety requirements with official sources before booking.
               </p>
+            </div>
+          </section>
+
+          <section className="rounded-[1.5rem] border border-sand/40 bg-white/80 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="text-sm text-navy-muted">
+                <span className="font-semibold text-navy">Compare history - Pro preview.</span> Pro is planned to retain deeper compare history across decision cycles.
+              </p>
+              <Link to="/pro" className="text-sm font-semibold text-navy hover:text-sky-accent">
+                View Pro preview
+              </Link>
             </div>
           </section>
         </>

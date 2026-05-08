@@ -661,6 +661,17 @@ const StayPlanner = () => {
         </section>
       )}
 
+      <section className="rounded-[1.5rem] border border-sand/40 bg-white/80 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-navy-muted">
+            <span className="font-semibold text-navy">Saved long-stay history expansion - Pro preview.</span> Current stay planner remains fully available; Pro is planned to extend historical planning context.
+          </p>
+          <Link to="/pro" className="text-sm font-semibold text-navy hover:text-sky-accent">
+            View Pro preview
+          </Link>
+        </div>
+      </section>
+
       {/* Report */}
       {report && (
         <div className="space-y-5">

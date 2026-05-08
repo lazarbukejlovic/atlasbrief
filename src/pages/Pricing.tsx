@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import PricingCard from '../components/PricingCard';
+import ProInterestCard from '../components/ProInterestCard';
 import { useAuth } from '../hooks/useAuth';
 import { startPlusCheckout } from '../lib/billing';
 import { PLAN_LIMITS } from '../lib/planLimits';
@@ -90,20 +91,23 @@ const Pricing = () => {
         <PricingCard
           name="Pro"
           price="$9/mo or $89/yr"
-          description="For families, teams, and extended stay planners."
-          ctaLabel="Coming soon"
-          onCtaClick={() => undefined}
-          ctaDisabled
+          description="For families, long-stay travelers, and serious multi-destination planning."
+          ctaLabel="Join Pro waitlist"
+          ctaTo="/pro"
+          ctaNote="Pro checkout is coming soon"
           features={[
             `${PLAN_LIMITS.pro} saved trips`,
-            'Family sharing',
-            'Compare destinations side-by-side',
-            'Early 30–90 day stay planner',
-            'Expanded readiness history',
+            'Family sharing preview workspace',
+            'Advanced alert monitoring preview',
+            'Exportable readiness summary preview',
+            'Long-stay planning history preview',
+            'Destination compare history preview',
             'Everything in Plus',
           ]}
         />
       </section>
+
+      <ProInterestCard compact />
 
       <section className="glass-card rounded-[2rem] border-2 border-sand/20 p-8">
         <div className="grid gap-6 lg:grid-cols-2">

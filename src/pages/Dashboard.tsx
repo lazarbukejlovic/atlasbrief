@@ -145,6 +145,21 @@ const Dashboard = () => {
         />
       </section>
 
+      <section className="glass-card rounded-[1.75rem] border border-sand/40 p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div className="text-xs font-semibold uppercase tracking-[0.2em] text-sand">Pro Preview</div>
+            <h2 className="mt-1 text-xl font-semibold text-navy">Family sharing and advanced trip history</h2>
+            <p className="mt-1 text-sm text-navy-muted">
+              Family sharing, longer trip history, and advanced readiness exports are planned for Pro.
+            </p>
+          </div>
+          <Link to="/pro" className="rounded-2xl border border-white/70 bg-white px-5 py-2.5 text-sm font-semibold text-navy shadow-soft transition hover:bg-white/80">
+            View Pro preview
+          </Link>
+        </div>
+      </section>
+
       <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
         <CostIndexChart destinations={destinations.slice(0, 6)} />
         <CurrencyWatch destination={strongestReadiness} />
