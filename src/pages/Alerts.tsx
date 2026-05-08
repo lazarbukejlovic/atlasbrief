@@ -2,6 +2,7 @@ import { AlertTriangle, Archive, BellRing, BookOpenCheck, CheckCheck, ChevronRig
 import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { getDestinationById } from '../data/destinations';
+import { notificationPreferenceLabels, riskToleranceLabels, useTravelerProfile } from '../hooks/useTravelerProfile';
 import type { AlertFilter } from '../lib/alerts';
 import { useAlerts } from '../hooks/useAlerts';
 
@@ -44,6 +45,7 @@ const formatAlertDate = (value: string) => {
 };
 
 const Alerts = () => {
+  const { profile } = useTravelerProfile();
   const [searchParams] = useSearchParams();
   const [activeFilter, setActiveFilter] = useState<AlertFilter>('all');
   const destinationId = searchParams.get('destination') ?? undefined;
@@ -63,6 +65,12 @@ const Alerts = () => {
 
   const filteredAlerts = useMemo(() => filterAlerts(activeFilter), [activeFilter, filterAlerts]);
   const hasAnyAlerts = alerts.length > 0;
+  const alertSensitivityNote =
+    profile.riskTolerance === 'cautious'
+      ? 'Cautious profile: prioritize important and watch alerts, then re-check official requirements before booking.'
+      : profile.riskTolerance === 'flexible'
+        ? 'Flexible profile: keep alert awareness broad and review major changes at milestone decisions.'
+        : 'Balanced profile: monitor major changes and destination-level watch signals during planning.';
 
   return (
     <div className="space-y-8">
@@ -278,6 +286,12 @@ const Alerts = () => {
             Use alerts to prioritize what to re-check. They are not legal, immigration, safety, or booking advice.
           </p>
         </div>
+      </section>
+
+      <section className="rounded-[1.5rem] border border-white/70 bg-white/80 p-4">
+        <p className="text-sm text-navy-muted">
+          <span className="font-semibold text-navy">Alert sensitivity:</span> {notificationPreferenceLabels[profile.notificationPreference]} · {riskToleranceLabels[profile.riskTolerance]}. {alertSensitivityNote}
+        </p>
       </section>
 
       <section className="rounded-[1.5rem] border border-sand/40 bg-white/80 p-4">

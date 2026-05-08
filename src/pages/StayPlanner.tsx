@@ -21,6 +21,13 @@ import { destinations } from '../data/destinations';
 import { getLongStayData } from '../data/longStayData';
 import { getDestinationTrustMetadata } from '../data/destinationTrust';
 import { useAuth } from '../hooks/useAuth';
+import {
+  budgetStyleLabels,
+  preferredTripLengthLabels,
+  riskToleranceLabels as travelerRiskToleranceLabels,
+  tripPurposeLabels,
+  useTravelerProfile,
+} from '../hooks/useTravelerProfile';
 import { useStayPlans } from '../hooks/useStayPlans';
 import FreshnessBadge from '../components/FreshnessBadge';
 import SourceConfidenceCard from '../components/SourceConfidenceCard';
@@ -72,7 +79,7 @@ function scoreColor(value: number): 'sky' | 'emerald' | 'amber' | 'red' {
   return 'red';
 }
 
-function SelectField<T extends string>({
+function SelectField<T extends string | number>({
   label,
   value,
   onChange,
@@ -101,7 +108,7 @@ function SelectField<T extends string>({
   );
 }
 
-function PillGroup<T extends string>({
+function PillGroup<T extends string | number>({
   label,
   value,
   onChange,
@@ -443,6 +450,7 @@ const defaultInputs: StayPlannerInputs = {
 
 const StayPlanner = () => {
   const { isAuthenticated } = useAuth();
+  const { profile } = useTravelerProfile();
   const {
     stayPlans,
     loading: loadingStayPlans,
@@ -491,6 +499,17 @@ const StayPlanner = () => {
 
   const destinationOptions = destinations.map((d) => ({ value: d.id, label: `${d.city}, ${d.country}` }));
   const selectedDestination = report?.destination ?? destinations.find((destination) => destination.id === inputs.destinationId);
+  const profileGuidance: string[] = [];
+
+  if (profile.tripPurpose === 'long-stay-exploration' || profile.preferredTripLength === '30-90-days') {
+    profileGuidance.push('Long-stay context: prioritize housing pressure, stay rules, and monthly cost stability.');
+  }
+  if (profile.tripPurpose === 'remote-work' || profile.remoteWorkImportance === 'high') {
+    profileGuidance.push('Remote-work context: emphasize internet reliability, workspace fit, and practical operating rhythm.');
+  }
+  if (profile.riskTolerance === 'cautious') {
+    profileGuidance.push('Cautious context: review healthcare access, insurance assumptions, and official requirement checks before booking.');
+  }
 
   const formatPlanDate = (value: string) => {
     const parsed = new Date(value.replace(' ', 'T'));
@@ -530,6 +549,24 @@ const StayPlanner = () => {
         country={selectedDestination?.country}
         categories={['remote-work-tools', 'insurance', 'stays']}
       />
+
+      <section className="rounded-[1.5rem] border border-sky-accent/15 bg-white/80 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-navy-muted">
+            <span className="font-semibold text-navy">Profile-aware guidance:</span> {tripPurposeLabels[profile.tripPurpose]} · {budgetStyleLabels[profile.budgetStyle]} · {travelerRiskToleranceLabels[profile.riskTolerance]} · {preferredTripLengthLabels[profile.preferredTripLength]}
+          </p>
+          <Link to="/profile" className="text-sm font-semibold text-navy hover:text-sky-accent">
+            Edit traveler profile
+          </Link>
+        </div>
+        {profileGuidance.length > 0 ? (
+          <ul className="mt-3 space-y-1 text-sm text-navy-muted">
+            {profileGuidance.map((item) => (
+              <li key={item}>• {item}</li>
+            ))}
+          </ul>
+        ) : null}
+      </section>
 
       {/* Form */}
       <section className="glass-card rounded-[2rem] p-8">

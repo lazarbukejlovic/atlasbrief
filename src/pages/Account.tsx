@@ -1,5 +1,6 @@
 import { Mail, ShieldCheck } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import AccountPlanCard from '../components/AccountPlanCard';
 import ComingSoonBadge from '../components/ComingSoonBadge';
 import { useAtlasBrief } from '../components/AppLayout';
@@ -135,6 +136,21 @@ const Account = () => {
           <button type="button" onClick={() => void signOut()} className="btn-secondary mt-6 px-5 py-2.5 text-sm">
             Logout
           </button>
+        </div>
+      </section>
+
+      <section className="glass-card rounded-[1.75rem] border border-sky-accent/20 p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-accent">Traveler profile</div>
+            <h2 className="mt-1 text-xl font-semibold text-navy">Personalize readiness summaries and reports.</h2>
+            <p className="mt-1 text-sm text-navy-muted">
+              Account handles billing and auth. Traveler Profile handles planning preferences and readiness context.
+            </p>
+          </div>
+          <Link to="/profile" className="rounded-2xl border border-white/70 bg-white px-5 py-2.5 text-sm font-semibold text-navy shadow-soft transition hover:bg-white/80">
+            Edit traveler profile
+          </Link>
         </div>
       </section>
 

@@ -14,10 +14,18 @@ import { getRecentIntelligenceUpdates } from '../data/travelIntelligenceUpdates'
 import { useAlerts } from '../hooks/useAlerts';
 import { useStayPlans } from '../hooks/useStayPlans';
 import { useAuth } from '../hooks/useAuth';
+import {
+  budgetStyleLabels,
+  preferredTripLengthLabels,
+  riskToleranceLabels,
+  tripPurposeLabels,
+  useTravelerProfile,
+} from '../hooks/useTravelerProfile';
 
 const Dashboard = () => {
   const { destinations, savedIds, savedLimit, watchlist, watchlistIds } = useAtlasBrief();
   const { isAuthenticated, currentPlan } = useAuth();
+  const { profile } = useTravelerProfile();
   const { stayPlans } = useStayPlans();
   const { latestActiveAlerts, unreadCount } = useAlerts();
 
@@ -171,6 +179,21 @@ const Dashboard = () => {
           </div>
           <Link to="/reports" className="rounded-2xl border border-white/70 bg-white px-5 py-2.5 text-sm font-semibold text-navy shadow-soft transition hover:bg-white/80">
             Open reports
+          </Link>
+        </div>
+      </section>
+
+      <section className="glass-card rounded-[1.75rem] border border-sky-accent/20 p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-accent">Traveler context</div>
+            <h2 className="mt-1 text-xl font-semibold text-navy">Profile-aware readiness context</h2>
+            <p className="mt-1 text-sm text-navy-muted">
+              {tripPurposeLabels[profile.tripPurpose]} · {budgetStyleLabels[profile.budgetStyle]} · {riskToleranceLabels[profile.riskTolerance]} · {preferredTripLengthLabels[profile.preferredTripLength]}
+            </p>
+          </div>
+          <Link to="/profile" className="rounded-2xl border border-white/70 bg-white px-5 py-2.5 text-sm font-semibold text-navy shadow-soft transition hover:bg-white/80">
+            Edit traveler profile
           </Link>
         </div>
       </section>

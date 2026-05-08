@@ -4,6 +4,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import FreshnessBadge from '../components/FreshnessBadge';
 import { getDestinationTrustMetadata } from '../data/destinationTrust';
 import { destinations, getDestinationReadinessScore } from '../data/destinations';
+import { tripPurposeLabels, useTravelerProfile } from '../hooks/useTravelerProfile';
 import {
   getRecentReportEvents,
   trackRecentReportEvent,
@@ -67,6 +68,7 @@ const actionLabelMap: Record<RecentReportEvent['action'], string> = {
 };
 
 const Reports = () => {
+  const { profile } = useTravelerProfile();
   const [searchParams, setSearchParams] = useSearchParams();
   const destinationParam = searchParams.get('destination');
   const typeParam = searchParams.get('type');
@@ -96,6 +98,47 @@ const Reports = () => {
         : 'Watch closely for updates';
 
   const checklistPercent = Math.round((checklistPrepared / destination.checklist.length) * 100);
+  const personalizationLine =
+    profile.riskTolerance === 'cautious'
+      ? 'Cautious profile: emphasize official checks and recent change review before booking decisions.'
+      : profile.tripPurpose === 'business'
+        ? 'Business profile: emphasize reliability, transit continuity, and operational readiness.'
+        : profile.tripPurpose === 'remote-work'
+          ? 'Remote-work profile: emphasize internet quality, monthly cost fit, stay length, and workspace rhythm.'
+          : profile.tripPurpose === 'family-group-travel'
+            ? 'Family/group profile: emphasize shared readiness, document prep, and checklist alignment.'
+            : 'Balanced readiness context based on your planning preferences.';
+
+  const personalizedSteps =
+    profile.riskTolerance === 'cautious'
+      ? [
+          'Review official sources before booking any non-refundable travel.',
+          'Re-check alerts and recent changes one more time before payment.',
+          'Confirm entry and health-related requirements from official channels.',
+        ]
+      : profile.tripPurpose === 'business'
+        ? [
+            'Prioritize transit reliability and route continuity for meeting windows.',
+            'Review operational signals and freshness before booking.',
+            'Validate official entry requirements for your work itinerary.',
+          ]
+        : profile.tripPurpose === 'remote-work'
+          ? [
+              'Confirm internet and workspace fit with your expected cadence.',
+              'Review monthly cost assumptions for the intended stay length.',
+              'Re-check official requirements before committing to lodging.',
+            ]
+          : profile.tripPurpose === 'family-group-travel'
+            ? [
+                'Align shared checklist items and readiness expectations for all travelers.',
+                'Review document and entry requirements for the group context.',
+                'Confirm safety and rules updates before booking decisions.',
+              ]
+            : [
+                'Review official sources before booking.',
+                'Recheck alerts and what changed before paying deposits.',
+                'Compare external travel options after confirming readiness.',
+              ];
 
   const reportSummaryText = [
     `AtlasBrief Readiness summary (${reportTypeLabels[reportType]})`,
@@ -109,8 +152,9 @@ const Reports = () => {
     `Checklist progress: ${checklistPrepared}/${destination.checklist.length}`,
     `Last checked: ${formatShortDate(destination.lastCheckedAt ?? destination.lastChecked)}`,
     `Source confidence: ${Math.round(destination.sourceConfidence * 100)}%`,
+    `Traveler profile context: ${tripPurposeLabels[profile.tripPurpose]} · ${profile.riskTolerance}`,
     'Review official sources before booking.',
-    'Preview export only. No official travel clearance is implied.',
+    'Preview export only. Not official travel documentation.',
   ].join('\n');
 
   const syncQueryParams = (nextDestinationId: string, nextType: ReportType) => {
@@ -176,6 +220,9 @@ const Reports = () => {
       </section>
 
       <section className="glass-card rounded-[1.75rem] border border-white/70 p-6">
+        <div className="mb-4 rounded-2xl border border-sky-accent/15 bg-sky-50/60 p-4 text-sm text-navy-muted">
+          <span className="font-semibold text-navy">Personalized by your traveler profile:</span> {personalizationLine}
+        </div>
         <div className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-accent">Report type selector</div>
         <div className="mt-4 grid gap-3 md:grid-cols-3">
           {orderedTypes.map((type) => (
@@ -303,16 +350,16 @@ const Reports = () => {
           <article className="rounded-2xl border border-sand/40 bg-ivory p-4">
             <p className="text-xs uppercase tracking-[0.16em] text-sand">Suggested next steps</p>
             <ul className="mt-2 space-y-2 text-sm text-navy-muted">
-              <li>Review official sources before booking.</li>
-              <li>Recheck alerts and what changed before paying deposits.</li>
-              <li>Compare external travel options after confirming readiness.</li>
+              {personalizedSteps.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
             </ul>
             <p className="mt-3 text-xs text-navy-muted">Partner redirect reminder: external booking tools should be used only after readiness review.</p>
           </article>
         </div>
 
         <div className="mt-5 rounded-2xl border border-white/70 bg-white/85 px-4 py-3 text-xs leading-6 text-navy-muted">
-          <span className="font-semibold text-navy">Disclaimer:</span> This readiness summary is a planning preview and not legal, immigration, or safety clearance. Conditions can change. Review official sources before booking.
+          <span className="font-semibold text-navy">Disclaimer:</span> This readiness summary is a planning preview and not official travel documentation. Conditions can change. Review official sources before booking.
         </div>
       </section>
 

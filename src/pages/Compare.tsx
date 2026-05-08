@@ -5,6 +5,7 @@ import FreshnessBadge from '../components/FreshnessBadge';
 import TripNextStepPanel from '../components/TripNextStepPanel';
 import { getDestinationTrustMetadata } from '../data/destinationTrust';
 import { destinations as allDestinations } from '../data/destinations';
+import { useTravelerProfile } from '../hooks/useTravelerProfile';
 import { getWatchlistSignal } from '../data/watchlistSignals';
 import {
   type CompareMode,
@@ -158,9 +159,15 @@ function ModePicker({
 function BestMatchCard({
   result,
   mode,
+  emphasize,
 }: {
   result: CompareResult;
   mode: CompareMode;
+  emphasize: {
+    value: boolean;
+    remote: boolean;
+    caution: boolean;
+  };
 }) {
   const best = result.bestMatch;
   const trust = getDestinationTrustMetadata(best.destination.id);
@@ -197,12 +204,12 @@ function BestMatchCard({
         </div>
 
         <div className="grid min-w-[200px] gap-3 sm:grid-cols-2">
-          <div className="rounded-2xl border border-white/70 bg-white/80 p-4 shadow-soft">
+          <div className={`rounded-2xl border bg-white/80 p-4 shadow-soft ${emphasize.value ? 'border-sky-accent/50 ring-1 ring-sky-accent/30' : 'border-white/70'}`}>
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-accent">Best value</p>
             <p className="mt-1 text-lg font-bold text-navy">{result.bestValue.destination.city}</p>
             <p className="mt-0.5 text-xs text-navy-muted">{result.bestValue.costBand}</p>
           </div>
-          <div className="rounded-2xl border border-white/70 bg-white/80 p-4 shadow-soft">
+          <div className={`rounded-2xl border bg-white/80 p-4 shadow-soft ${emphasize.remote ? 'border-sky-accent/50 ring-1 ring-sky-accent/30' : 'border-white/70'}`}>
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-accent">Best remote work</p>
             <p className="mt-1 text-lg font-bold text-navy">{result.bestRemoteWork.destination.city}</p>
             <p className="mt-0.5 text-xs text-navy-muted">Internet: {result.bestRemoteWork.internetScore}/100</p>
@@ -212,7 +219,7 @@ function BestMatchCard({
             <p className="mt-1 text-lg font-bold text-navy">{result.lowestFriction.destination.city}</p>
             <p className="mt-0.5 text-xs text-navy-muted capitalize">{result.lowestFriction.longStay.visaComplexity} visa</p>
           </div>
-          <div className="rounded-2xl border border-amber-200 bg-amber-50/60 p-4 shadow-soft">
+          <div className={`rounded-2xl border bg-amber-50/60 p-4 shadow-soft ${emphasize.caution ? 'border-amber-400 ring-1 ring-amber-300' : 'border-amber-200'}`}>
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-700">Watch carefully</p>
             <p className="mt-1 text-lg font-bold text-navy">{result.watchCarefully.destination.city}</p>
             <p className="mt-0.5 text-xs text-amber-700">Trust: {result.watchCarefully.trustScore}/100</p>
@@ -471,6 +478,7 @@ function DecisionInsights({ result }: { result: CompareResult }) {
 }
 
 const Compare = () => {
+  const { profile } = useTravelerProfile();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [mode, setMode] = useState<CompareMode>('tourist');
   const [result, setResult] = useState<CompareResult | null>(null);
@@ -501,6 +509,14 @@ const Compare = () => {
     setSelectedIds([]);
   };
 
+  const profileWeightingLabel = [
+    profile.budgetStyle === 'value-focused' ? 'value signal emphasized' : null,
+    profile.remoteWorkImportance === 'high' ? 'remote-work fit emphasized' : null,
+    profile.riskTolerance === 'cautious' ? 'watch and low-friction signals emphasized' : null,
+  ]
+    .filter(Boolean)
+    .join(' · ');
+
   return (
     <div className="space-y-8">
       {/* Hero */}
@@ -515,6 +531,9 @@ const Compare = () => {
           </p>
           <p className="mt-2 max-w-2xl text-sm text-navy-muted">
             This is a planning decision tool, not booking or legal advice. Always verify requirements with official sources.
+          </p>
+          <p className="mt-2 max-w-2xl text-sm text-navy-muted">
+            <span className="font-semibold text-navy">Weighted by your profile:</span> {profileWeightingLabel || 'Base compare weighting active. Set preferences in Traveler Profile for personalized emphasis.'}
           </p>
         </div>
         {result && (
@@ -614,7 +633,15 @@ const Compare = () => {
           </section>
 
           {/* Best match summary */}
-          <BestMatchCard result={result} mode={mode} />
+          <BestMatchCard
+            result={result}
+            mode={mode}
+            emphasize={{
+              value: profile.budgetStyle === 'value-focused',
+              remote: profile.remoteWorkImportance === 'high' || profile.tripPurpose === 'remote-work',
+              caution: profile.riskTolerance === 'cautious',
+            }}
+          />
 
           {activeWatchSignalCount > 0 ? (
             <section className="rounded-[1.5rem] border border-amber-200 bg-amber-50/70 p-4">
