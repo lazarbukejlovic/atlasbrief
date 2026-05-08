@@ -6,7 +6,8 @@ import { startPlusCheckout } from '../lib/billing';
 import { PLAN_LIMITS } from '../lib/planLimits';
 
 const Pricing = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, currentPlan } = useAuth();
+  const isOnPlus = currentPlan === 'Plus' || currentPlan === 'Pro';
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
@@ -64,10 +65,19 @@ const Pricing = () => {
           name="Plus"
           price="$5/mo or $49/yr"
           description="For remote workers and frequent business travelers."
-          ctaLabel={isAuthenticated ? (checkoutLoading ? 'Opening checkout...' : 'Upgrade to Plus') : 'Log in or sign up'}
-          ctaTo={isAuthenticated ? undefined : '/signup?plan=plus'}
-          onCtaClick={isAuthenticated ? () => void handlePlusCheckout() : undefined}
-          ctaDisabled={checkoutLoading}
+          ctaLabel={
+            isOnPlus
+              ? 'Current plan'
+              : isAuthenticated
+              ? checkoutLoading
+                ? 'Opening checkout...'
+                : 'Upgrade to Plus'
+              : 'Log in or sign up'
+          }
+          ctaTo={!isOnPlus && !isAuthenticated ? '/signup?plan=plus' : undefined}
+          onCtaClick={isOnPlus ? () => undefined : isAuthenticated ? () => void handlePlusCheckout() : undefined}
+          ctaDisabled={isOnPlus || checkoutLoading}
+          ctaNote={isOnPlus ? 'You are currently on Plus' : undefined}
           featured
           features={[
             `${PLAN_LIMITS.plus} saved trip briefs`,

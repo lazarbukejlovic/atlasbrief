@@ -57,9 +57,16 @@ const AccountPlanCard = ({
         </div>
       </div>
 
-      <div className="mt-4 rounded-2xl border border-sky-accent/20 bg-white/70 p-4 text-sm text-navy-muted">
-        Test-mode-ready checkout and billing portal are connected here. Live payment activation is not enabled in this workspace.
-      </div>
+      {plan === 'Free' ? (
+        <div className="mt-4 rounded-2xl border border-sky-accent/20 bg-white/70 p-4 text-sm text-navy-muted">
+          Upgrade to Plus to unlock higher saved brief limits and additional features.
+        </div>
+      ) : (
+        <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50/70 p-4 text-sm">
+          <span className="font-medium text-emerald-800">{plan} plan active.</span>{' '}
+          <span className="text-emerald-700">Your subscription is confirmed. Manage or cancel anytime via the billing portal.</span>
+        </div>
+      )}
 
       {(plan === 'Plus' || plan === 'Pro') && cancelAtPeriodEnd && cancelDateLabel ? (
         <div className="mt-4 rounded-2xl border border-sky-accent/20 bg-sky-50/70 p-4 text-sm text-navy-muted">

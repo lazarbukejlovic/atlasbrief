@@ -14,6 +14,7 @@ import Pricing from './pages/Pricing';
 import Saved from './pages/Saved';
 import Signup from './pages/Signup';
 import Watchlist from './pages/Watchlist';
+import StayPlanner from './pages/StayPlanner';
 
 const App = () => {
   return (
@@ -27,6 +28,7 @@ const App = () => {
             <Route path="destinations/:id" element={<DestinationDetail />} />
             <Route path="saved" element={<Saved />} />
             <Route path="watchlist" element={<Watchlist />} />
+            <Route path="stay-planner" element={<StayPlanner />} />
             <Route path="pricing" element={<Pricing />} />
             <Route path="about" element={<About />} />
             <Route path="login" element={<Login />} />

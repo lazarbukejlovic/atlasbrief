@@ -150,6 +150,29 @@ const Dashboard = () => {
         )}
       </section>
 
+      {/* Stay Planner CTA */}
+      <section className="glass-card rounded-[1.75rem] border border-sky-accent/20 p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="text-xs font-semibold uppercase tracking-[0.22em] text-sky-accent">30–90 Day Stay Planner</div>
+            <h2 className="mt-3 text-2xl font-semibold text-navy">Assess long-stay feasibility</h2>
+            <p className="mt-2 max-w-xl text-sm leading-7 text-navy-muted">
+              Planning a 30, 60, or 90-day stay? Get a cost estimate, visa snapshot, internet fit, housing pressure, and a full preparation checklist — tailored to your budget and work style.
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2 text-xs text-navy-muted">
+              {['Cost estimate', 'Visa snapshot', 'Internet & remote work fit', 'Safety signals', 'Stay checklist'].map((label) => (
+                <span key={label} className="rounded-full border border-white/60 bg-white/80 px-2.5 py-1 font-medium text-navy shadow-soft">
+                  {label}
+                </span>
+              ))}
+            </div>
+          </div>
+          <Link to="/stay-planner" className="btn-primary inline-flex shrink-0 items-center justify-center gap-2 px-6 py-3 text-sm">
+            Open Stay Planner
+          </Link>
+        </div>
+      </section>
+
       <section className="space-y-5">
         <div className="flex items-end justify-between gap-4">
           <div>

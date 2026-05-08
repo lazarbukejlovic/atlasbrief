@@ -79,9 +79,19 @@ const Account = () => {
       await refreshBilling();
       await openBillingPortal();
     } catch (error) {
-      setBillingError(
-        error instanceof Error ? error.message : 'Unable to open billing right now.'
-      );
+      const rawMessage = error instanceof Error ? error.message : '';
+      const isLocalIssue =
+        rawMessage.includes('Unable to start billing') ||
+        rawMessage.includes('Failed to fetch') ||
+        rawMessage.includes('404') ||
+        rawMessage.includes('NetworkError');
+      if (isActivePaidPlan && isLocalIssue) {
+        setBillingError(
+          'Billing portal is unavailable in this local session. Your Plus plan is still active.'
+        );
+      } else {
+        setBillingError(rawMessage || 'Unable to open billing right now.');
+      }
       setBillingAction(null);
     }
   };

@@ -8,6 +8,7 @@ const navItems = [
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/destinations', label: 'Destinations' },
   { to: '/watchlist', label: 'Watchlist' },
+  { to: '/stay-planner', label: 'Stay Planner' },
   { to: '/saved', label: 'Saved' },
   { to: '/pricing', label: 'Pricing' },
   { to: '/about', label: 'About' },
@@ -19,7 +20,8 @@ interface NavbarProps {
 
 const Navbar = ({ savedCount }: NavbarProps) => {
   const [open, setOpen] = useState(false);
-  const { isAuthenticated, signOut } = useAuth();
+  const { isAuthenticated, signOut, currentPlan } = useAuth();
+  const isPaidPlan = currentPlan === 'Plus' || currentPlan === 'Pro';
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/60 bg-ivory/80 backdrop-blur-xl">
@@ -56,9 +58,15 @@ const Navbar = ({ savedCount }: NavbarProps) => {
           <Link to="/saved" className="rounded-full border border-sky-accent/15 bg-white px-4 py-2 text-sm font-semibold text-navy shadow-soft">
             Saved {savedCount > 0 ? `(${savedCount})` : ''}
           </Link>
-          <Link to="/pricing" className="btn-primary px-5 py-2.5 text-sm">
-            Upgrade
-          </Link>
+          {isPaidPlan ? (
+            <Link to="/account" className="btn-primary px-5 py-2.5 text-sm">
+              Manage Billing
+            </Link>
+          ) : (
+            <Link to="/pricing" className="btn-primary px-5 py-2.5 text-sm">
+              Upgrade
+            </Link>
+          )}
           {isAuthenticated ? (
             <>
               <Link to="/account" className="rounded-full border border-sky-accent/15 bg-white px-4 py-2 text-sm font-semibold text-navy shadow-soft">

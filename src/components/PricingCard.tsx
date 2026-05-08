@@ -11,6 +11,7 @@ interface PricingCardProps {
   ctaTo?: string;
   onCtaClick?: () => void;
   ctaDisabled?: boolean;
+  ctaNote?: string;
 }
 
 const PricingCard = ({
@@ -23,6 +24,7 @@ const PricingCard = ({
   ctaTo,
   onCtaClick,
   ctaDisabled = false,
+  ctaNote,
 }: PricingCardProps) => {
   const ctaClassName = `mt-8 inline-flex w-full items-center justify-center rounded-2xl px-5 py-3 text-sm font-semibold transition ${featured ? 'bg-white text-navy hover:bg-ivory disabled:bg-white/70' : 'bg-navy text-white hover:bg-navy-light disabled:bg-navy/60'}`;
 
@@ -50,6 +52,9 @@ const PricingCard = ({
           {ctaLabel}
         </Link>
       ) : null}
+          {ctaNote ? (
+            <p className={`mt-3 text-center text-xs ${featured ? 'text-white/60' : 'text-navy-muted'}`}>{ctaNote}</p>
+          ) : null}
     </article>
   );
 };
