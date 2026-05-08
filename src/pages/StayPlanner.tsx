@@ -666,6 +666,9 @@ const StayPlanner = () => {
           <p className="text-sm text-navy-muted">
             <span className="font-semibold text-navy">Saved long-stay history expansion - Pro preview.</span> Current stay planner remains fully available; Pro is planned to extend historical planning context.
           </p>
+          <Link to={`/reports${selectedDestination ? `?destination=${selectedDestination.id}&type=long-stay-feasibility` : '?type=long-stay-feasibility'}`} className="text-sm font-semibold text-navy hover:text-sky-accent">
+            Create long-stay summary
+          </Link>
           <Link to="/pro" className="text-sm font-semibold text-navy hover:text-sky-accent">
             View Pro preview
           </Link>

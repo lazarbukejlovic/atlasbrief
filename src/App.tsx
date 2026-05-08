@@ -14,6 +14,7 @@ import Login from './pages/Login';
 import Pricing from './pages/Pricing';
 import Pro from './pages/Pro';
 import Partners from './pages/Partners';
+import Reports from './pages/Reports';
 import Saved from './pages/Saved';
 import Signup from './pages/Signup';
 import Watchlist from './pages/Watchlist';
@@ -36,6 +37,7 @@ const App = () => {
             <Route path="stay-planner" element={<StayPlanner />} />
             <Route path="compare" element={<Compare />} />
             <Route path="partners" element={<Partners />} />
+            <Route path="reports" element={<Reports />} />
             <Route path="pro" element={<Pro />} />
             <Route path="pricing" element={<Pricing />} />
             <Route path="about" element={<About />} />

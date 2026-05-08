@@ -87,6 +87,9 @@ const Pro = () => {
         </p>
 
         <div className="mt-4 flex flex-wrap gap-3">
+          <Link to="/reports" className="rounded-2xl border border-white/70 bg-white px-5 py-2.5 text-sm font-semibold text-navy shadow-soft transition hover:bg-white/80">
+            Open reports preview
+          </Link>
           <Link to="/pricing" className="rounded-2xl bg-navy px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-navy-light">
             Return to pricing
           </Link>

@@ -62,6 +62,12 @@ const DestinationDetail = () => {
       <TripReadinessBrief destination={destination} compact={false} />
 
       <div className="flex flex-wrap justify-end gap-3">
+        <Link
+          to={`/reports?destination=${destination.id}&type=trip-readiness`}
+          className="inline-flex items-center gap-2 rounded-2xl border border-white/70 bg-white/85 px-5 py-3 text-sm font-semibold text-navy shadow-soft transition hover:bg-white"
+        >
+          Generate readiness report
+        </Link>
         <button
           type="button"
           onClick={() => void toggleSaved(destination)}

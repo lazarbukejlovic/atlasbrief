@@ -204,6 +204,12 @@ const Saved = () => {
               >
                 Open full destination brief
               </Link>
+              <Link
+                to={`/reports?destination=${brief.destination_id}&type=trip-readiness`}
+                className="mt-3 inline-flex rounded-2xl border border-white/70 bg-white/85 px-4 py-2 text-sm font-semibold text-navy shadow-soft transition hover:bg-white"
+              >
+                Create report from saved brief
+              </Link>
                   </>
                 );
               })()}

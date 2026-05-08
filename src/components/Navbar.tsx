@@ -15,6 +15,7 @@ const secondaryNavItems = [
   { to: '/watchlist', label: 'Watchlist' },
   { to: '/stay-planner', label: 'Stay Planner' },
   { to: '/saved', label: 'Saved Briefs' },
+  { to: '/reports', label: 'Reports' },
   { to: '/partners', label: 'Partners' },
   { to: '/pro', label: 'Pro Preview' },
   { to: '/pricing', label: 'Pricing' },
