@@ -2,6 +2,7 @@ import { AlertTriangle, CheckCircle, ChevronDown, Globe2, Info, Layers, RefreshC
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import FreshnessBadge from '../components/FreshnessBadge';
+import SeoMeta from '../components/SeoMeta';
 import TripNextStepPanel from '../components/TripNextStepPanel';
 import { getDestinationTrustMetadata } from '../data/destinationTrust';
 import { destinations as allDestinations } from '../data/destinations';
@@ -519,6 +520,12 @@ const Compare = () => {
 
   return (
     <div className="space-y-8">
+      <SeoMeta
+        title="Compare Destinations | AtlasBrief"
+        description="Compare destination readiness, cost posture, trust/freshness, and planning friction before booking your next trip."
+        canonicalPath="/compare"
+      />
+
       {/* Hero */}
       <section className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
@@ -534,6 +541,9 @@ const Compare = () => {
           </p>
           <p className="mt-2 max-w-2xl text-sm text-navy-muted">
             <span className="font-semibold text-navy">Weighted by your profile:</span> {profileWeightingLabel || 'Base compare weighting active. Set preferences in Traveler Profile for personalized emphasis.'}
+          </p>
+          <p className="mt-2 max-w-2xl text-sm text-navy-muted">
+            Want public pre-trip context first? <Link to="/dossiers" className="font-semibold text-sky-accent">Browse destination dossiers</Link>.
           </p>
         </div>
         {result && (
@@ -607,9 +617,14 @@ const Compare = () => {
               <p className="text-sm text-navy-muted">
                 <span className="font-semibold text-navy">Compare history - Pro preview.</span> Current compare remains available; Pro will expand saved comparison history over time.
               </p>
-              <Link to="/pro" className="text-sm font-semibold text-navy hover:text-sky-accent">
-                View Pro preview
-              </Link>
+              <div className="flex items-center gap-3">
+                <Link to="/dossiers" className="text-sm font-semibold text-navy hover:text-sky-accent">
+                  Browse dossiers
+                </Link>
+                <Link to="/pro" className="text-sm font-semibold text-navy hover:text-sky-accent">
+                  View Pro preview
+                </Link>
+              </div>
             </div>
           </section>
         </>
@@ -743,9 +758,14 @@ const Compare = () => {
               <p className="text-sm text-navy-muted">
                 <span className="font-semibold text-navy">Compare history - Pro preview.</span> Pro is planned to retain deeper compare history across decision cycles.
               </p>
-              <Link to="/pro" className="text-sm font-semibold text-navy hover:text-sky-accent">
-                View Pro preview
-              </Link>
+              <div className="flex items-center gap-3">
+                <Link to="/dossiers" className="text-sm font-semibold text-navy hover:text-sky-accent">
+                  Browse dossiers
+                </Link>
+                <Link to="/pro" className="text-sm font-semibold text-navy hover:text-sky-accent">
+                  View Pro preview
+                </Link>
+              </div>
             </div>
           </section>
         </>

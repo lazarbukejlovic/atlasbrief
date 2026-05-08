@@ -1,6 +1,15 @@
+import { Link } from 'react-router-dom';
+import SeoMeta from '../components/SeoMeta';
+
 const About = () => {
   return (
     <div className="space-y-8">
+      <SeoMeta
+        title="About AtlasBrief | Trip Readiness Platform"
+        description="Learn how AtlasBrief helps travelers evaluate destination readiness, cost, risk signals, and trust/freshness before booking."
+        canonicalPath="/about"
+      />
+
       <section className="glass-card rounded-[2rem] p-8">
         <div className="text-xs font-semibold uppercase tracking-[0.22em] text-sky-accent">About AtlasBrief</div>
         <h1 className="mt-3 max-w-4xl text-4xl font-semibold tracking-tight text-navy md:text-5xl">
@@ -116,6 +125,10 @@ const About = () => {
       <section className="glass-card rounded-[2rem] p-8">
         <div className="text-xs font-semibold uppercase tracking-[0.22em] text-sky-accent">Data & Trust</div>
         <h2 className="mt-3 text-3xl font-semibold text-navy">How AtlasBrief handles planning confidence</h2>
+        <p className="mt-3 text-sm text-navy-muted">
+          Browse public dossier examples to see this trust posture in destination-level practice.{' '}
+          <Link to="/dossiers" className="font-semibold text-sky-accent">Open destination dossiers</Link>
+        </p>
         <div className="mt-5 grid gap-4 md:grid-cols-2">
           <div className="rounded-2xl border border-white/70 bg-white/80 p-4 text-sm text-navy-muted">
             <p className="font-semibold text-navy">Planning snapshots</p>

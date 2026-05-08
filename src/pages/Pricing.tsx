@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import PricingCard from '../components/PricingCard';
 import ProInterestCard from '../components/ProInterestCard';
+import SeoMeta from '../components/SeoMeta';
 import { useAuth } from '../hooks/useAuth';
 import { startPlusCheckout } from '../lib/billing';
 import { PLAN_LIMITS } from '../lib/planLimits';
@@ -27,6 +28,12 @@ const Pricing = () => {
 
   return (
     <div className="space-y-10">
+      <SeoMeta
+        title="Pricing | AtlasBrief"
+        description="Free to start, Plus for monitoring. Compare AtlasBrief plans for destination readiness, alerts, saved intelligence, and trip planning workflows."
+        canonicalPath="/pricing"
+      />
+
       <section className="glass-card rounded-[2rem] p-8 text-center md:p-10">
         <div className="text-xs font-semibold uppercase tracking-[0.22em] text-sky-accent">Pricing</div>
         <h1 className="mt-3 text-4xl font-semibold tracking-tight text-navy md:text-5xl">Trip readiness, at every budget</h1>

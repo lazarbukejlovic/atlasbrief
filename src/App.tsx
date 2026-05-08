@@ -9,6 +9,8 @@ import Alerts from './pages/Alerts';
 import Dashboard from './pages/Dashboard';
 import DestinationDetail from './pages/DestinationDetail';
 import Destinations from './pages/Destinations';
+import DossierDetail from './pages/DossierDetail';
+import Dossiers from './pages/Dossiers';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Pricing from './pages/Pricing';
@@ -32,6 +34,8 @@ const App = () => {
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="destinations" element={<Destinations />} />
             <Route path="destinations/:id" element={<DestinationDetail />} />
+            <Route path="dossiers" element={<Dossiers />} />
+            <Route path="dossiers/:slug" element={<DossierDetail />} />
             <Route path="alerts" element={<Alerts />} />
             <Route path="saved" element={<Saved />} />
             <Route path="watchlist" element={<Watchlist />} />

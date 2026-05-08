@@ -30,6 +30,7 @@ import {
 } from '../hooks/useTravelerProfile';
 import { useStayPlans } from '../hooks/useStayPlans';
 import FreshnessBadge from '../components/FreshnessBadge';
+import SeoMeta from '../components/SeoMeta';
 import SourceConfidenceCard from '../components/SourceConfidenceCard';
 import SourcePolicyNotice from '../components/SourcePolicyNotice';
 import TripNextStepPanel from '../components/TripNextStepPanel';
@@ -526,6 +527,12 @@ const StayPlanner = () => {
 
   return (
     <div className="space-y-8">
+      <SeoMeta
+        title="Stay Planner | AtlasBrief"
+        description="Evaluate 30-90 day stay feasibility with cost, rules, housing, internet, and safety planning signals before committing."
+        canonicalPath="/stay-planner"
+      />
+
       {/* Page header */}
       <section className="glass-card rounded-[2rem] p-8">
         <div className="text-xs font-semibold uppercase tracking-[0.22em] text-sky-accent">30–90 Day Stay Planner</div>
@@ -539,6 +546,9 @@ const StayPlanner = () => {
           <span className="rounded-full bg-white px-3 py-1 font-semibold text-navy shadow-soft">Not an itinerary planner</span>
           <span className="rounded-full bg-white/80 px-3 py-1">Static planning data · verify before booking</span>
           <span className="rounded-full bg-white/80 px-3 py-1">All 8 current destinations supported</span>
+          <Link to="/dossiers" className="rounded-full bg-white/80 px-3 py-1 font-semibold text-sky-accent shadow-soft">
+            Browse dossiers
+          </Link>
         </div>
       </section>
 

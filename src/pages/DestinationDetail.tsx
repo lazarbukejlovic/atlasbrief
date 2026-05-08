@@ -63,6 +63,12 @@ const DestinationDetail = () => {
 
       <div className="flex flex-wrap justify-end gap-3">
         <Link
+          to={`/dossiers/${destination.id}`}
+          className="inline-flex items-center gap-2 rounded-2xl border border-white/70 bg-white/85 px-5 py-3 text-sm font-semibold text-navy shadow-soft transition hover:bg-white"
+        >
+          View public dossier
+        </Link>
+        <Link
           to={`/reports?destination=${destination.id}&type=trip-readiness`}
           className="inline-flex items-center gap-2 rounded-2xl border border-white/70 bg-white/85 px-5 py-3 text-sm font-semibold text-navy shadow-soft transition hover:bg-white"
         >
@@ -197,6 +203,10 @@ const DestinationDetail = () => {
         country={destination.country}
         categories={['stays', 'flights', 'visa-entry-help']}
       />
+
+      <section className="rounded-2xl border border-sky-accent/15 bg-white/80 px-4 py-3 text-sm text-navy-muted">
+        Share this destination as a public brief: <Link to={`/dossiers/${destination.id}`} className="font-semibold text-sky-accent">open dossier</Link>
+      </section>
 
       <SourceFreshnessPanel
         lastChecked={destination.lastChecked}

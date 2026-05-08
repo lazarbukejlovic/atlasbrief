@@ -5,6 +5,7 @@ import CostIndexChart from '../components/CostIndexChart';
 import CurrencyWatch from '../components/CurrencyWatch';
 import DashboardCard from '../components/DashboardCard';
 import FreshnessBadge from '../components/FreshnessBadge';
+import SeoMeta from '../components/SeoMeta';
 import TripProfileCard from '../components/TripProfileCard';
 import UserPlanBadge from '../components/UserPlanBadge';
 import { getDestinationTrustMetadata } from '../data/destinationTrust';
@@ -79,6 +80,12 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-8">
+      <SeoMeta
+        title="Dashboard | AtlasBrief"
+        description="Monitor saved destination intelligence, watchlist signals, alerts, reports, and traveler context in your AtlasBrief trip readiness dashboard."
+        canonicalPath="/dashboard"
+      />
+
       <section className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <div className="text-xs font-semibold uppercase tracking-[0.22em] text-sky-accent">Trip Planning</div>
@@ -180,6 +187,9 @@ const Dashboard = () => {
           <Link to="/reports" className="rounded-2xl border border-white/70 bg-white px-5 py-2.5 text-sm font-semibold text-navy shadow-soft transition hover:bg-white/80">
             Open reports
           </Link>
+        </div>
+        <div className="mt-3 text-sm text-navy-muted">
+          Need a public snapshot first? <Link to="/dossiers" className="font-semibold text-sky-accent">Browse destination dossiers</Link>.
         </div>
       </section>
 

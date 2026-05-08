@@ -12,6 +12,7 @@ const primaryNavItems = [
 ];
 
 const secondaryNavItems = [
+  { to: '/dossiers', label: 'Dossiers' },
   { to: '/watchlist', label: 'Watchlist' },
   { to: '/stay-planner', label: 'Stay Planner' },
   { to: '/saved', label: 'Saved Briefs' },

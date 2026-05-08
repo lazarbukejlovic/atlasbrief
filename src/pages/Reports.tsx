@@ -2,6 +2,7 @@ import { Copy, Download, Printer, Share2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import FreshnessBadge from '../components/FreshnessBadge';
+import SeoMeta from '../components/SeoMeta';
 import { getDestinationTrustMetadata } from '../data/destinationTrust';
 import { destinations, getDestinationReadinessScore } from '../data/destinations';
 import { tripPurposeLabels, useTravelerProfile } from '../hooks/useTravelerProfile';
@@ -209,6 +210,12 @@ const Reports = () => {
 
   return (
     <div className="space-y-8">
+      <SeoMeta
+        title="Readiness Reports | AtlasBrief"
+        description="Create shareable readiness report previews for destination decisions before booking. Includes trust and freshness context with conservative planning guidance."
+        canonicalPath="/reports"
+      />
+
       <section className="glass-card rounded-[2rem] border border-sky-accent/20 p-8">
         <div className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-accent">Readiness reports</div>
         <h1 className="mt-3 text-4xl font-semibold tracking-tight text-navy md:text-5xl">
@@ -216,6 +223,9 @@ const Reports = () => {
         </h1>
         <p className="mt-3 max-w-3xl text-base leading-8 text-navy-muted">
           Turn destination intelligence into a clear trip-readiness summary before you commit.
+        </p>
+        <p className="mt-2 text-sm text-navy-muted">
+          Public entry point available via destination dossiers. <Link to="/dossiers" className="font-semibold text-sky-accent">Browse dossiers</Link>.
         </p>
       </section>
 
@@ -263,6 +273,12 @@ const Reports = () => {
             className="inline-flex items-center justify-center rounded-2xl border border-white/70 bg-white px-5 py-3 text-sm font-semibold text-navy shadow-soft transition hover:bg-white/80"
           >
             Open destination brief
+          </Link>
+          <Link
+            to={`/dossiers/${destination.id}`}
+            className="inline-flex items-center justify-center rounded-2xl border border-white/70 bg-white px-5 py-3 text-sm font-semibold text-navy shadow-soft transition hover:bg-white/80"
+          >
+            Open public dossier
           </Link>
         </div>
       </section>
