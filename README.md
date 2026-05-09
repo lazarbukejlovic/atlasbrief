@@ -98,21 +98,6 @@ AtlasBrief turns that scattered pre-booking research into a structured readiness
 - Modular feature pages and reusable UI patterns
 - Conservative trust and freshness layer across decision points
 
-## Product Screens
-
-> Final screenshots will be added for portfolio presentation.
-
-Suggested screenshot set:
-
-- Landing hero
-- Dashboard
-- Destination dossier
-- Saved briefs
-- Watchlist
-- Stay planner
-- Compare
-- Reports
-- Account and billing
 
 ## Local Development
 
