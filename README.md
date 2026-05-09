@@ -1,80 +1,63 @@
 # AtlasBrief
 
-A production-ready travel-readiness and destination intelligence platform for checking where you can go, what it may cost, what changed, and whether a destination fits your trip before booking.
+A production-deployed travel-readiness and destination intelligence platform for evaluating destination fit, cost pressure, risk context, and what changed before booking.
 
-## [Live Demo](https://atlasbrief.vercel.app)
-## [Repository](https://github.com/lazarbukejlovic/atlasbrief)
+- Live Demo: https://atlasbrief.vercel.app
+- Repository: https://github.com/lazarbukejlovic/atlasbrief
+
+## At A Glance
+
+- Live production demo
+- Supabase Auth
+- Stripe Plus billing
+- Saved briefs and watchlist
+- 30-90 day stay planner
+- Public destination dossiers
+- Reports, alerts, compare, profile, and partner redirect surfaces
+- Vercel SPA refresh-safe deployment
 
 ## Overview
 
-AtlasBrief is built for better pre-booking decisions, not itinerary building. It helps travelers evaluate trip-readiness signals, practical cost context, local rules, risk posture, and recent destination changes before committing money to flights or stays.
+AtlasBrief is built around one practical pre-booking question: Is this destination actually practical before I commit money?
 
-The product combines authenticated workflows and public discovery surfaces in one experience: saved briefs, watchlist monitoring, alerts, 30-90 day stay planning, compare tools, report previews, and publicly accessible destination dossiers. It is implemented as a full-stack, production-deployed web product with authentication, subscription billing, database-backed persistence, SEO-friendly public pages, and Vercel deployment behavior tuned for SPA refresh routing.
+It combines public discovery pages (landing, dossiers, SEO-facing surfaces) with authenticated workflows (saved intelligence, monitoring, planning, account, and billing). AtlasBrief is implemented as a full-stack product layer with authentication, subscription billing, database-backed persistence, refresh-safe route deployment, and trust/freshness disclaimers at key decision points.
+
+The goal is not to overclaim official-source authority. The product is designed to help travelers structure pre-booking readiness decisions clearly and conservatively.
 
 ## Why This Project Exists
 
-Travel planning is often fragmented across many tabs and inconsistent sources. Before booking, people usually need answers to a practical set of questions:
+Travel planning is fragmented across tabs, inconsistent sources, and constantly changing destination conditions.
+
+Before booking, travelers usually need answers to:
 
 - Can I go?
 - What will it roughly cost?
 - What changed since I last checked?
-- Is this destination realistic for my trip length and work style?
+- Is this realistic for my trip length, budget, and work style?
 
-AtlasBrief turns that fragmented pre-booking research into a structured readiness workflow.
+AtlasBrief turns that scattered pre-booking research into a structured readiness workflow.
 
 ## Core Features
 
-### Trip Readiness
+| Area | What it includes |
+| --- | --- |
+| Trip Readiness | Destination readiness signals, entry/rules reminders, cost posture, safety/risk context, and practical local travel notes before booking. |
+| Saved Intelligence | Supabase-backed saved briefs, destination watchlist, alerts and change-monitoring UX, trust/freshness indicators, and refresh-safe saved data behavior. |
+| 30-90 Day Stay Planning | Stay planner flow with monthly cost estimation, long-stay feasibility scoring, internet/work fit guidance, housing pressure context, healthcare/insurance reminders, and saved stay plans. |
+| Decision Tools | Destination compare, readiness report surfaces, traveler profile personalization, partner redirects, and Pro preview/family workspace surfaces. |
+| Public Discovery Layer | Public destination dossiers, SEO metadata, sitemap/robots support, trust/freshness disclaimers, and readiness-first landing positioning. |
+| Monetization and Account Layer | Supabase auth, Free/Plus behavior, Stripe Checkout, webhook sync, Billing Portal, account subscription status surfaces, and Pro tier checkout disabled (Coming soon). |
 
-- Destination readiness signals
-- Entry and local-rules reminders
-- Cost and budget context
-- Safety and risk signals
-- Practical local travel notes
+## What This Project Demonstrates
 
-### Saved Intelligence
-
-- Supabase-backed saved briefs
-- Destination watchlist
-- Alerts and change-monitoring UX
-- Trust and freshness indicators
-- Refresh-safe saved data behavior
-
-### 30-90 Day Stay Planning
-
-- Stay planner route and workflow
-- Monthly cost estimate context
-- Long-stay feasibility score
-- Internet and work-fit guidance
-- Housing pressure and practical fit notes
-- Healthcare and insurance reminders
-- Saved stay plans
-
-### Decision Tools
-
-- Destination compare workflow
-- Reports and readiness summaries
-- Partner redirect surface
-- Traveler profile personalization
-- Pro preview and family workspace surface (coming soon)
-
-### Public Discovery Layer
-
-- Public destination dossiers
-- SEO metadata support
-- Sitemap and robots configuration
-- Trust and freshness disclaimers
-- Landing-page positioning for readiness-first decisions
-
-### Monetization and Account Layer
-
-- Supabase authentication
-- Free and Plus plan behavior
-- Stripe Checkout
-- Stripe webhook sync
-- Stripe Billing Portal
-- Account and subscription status views
-- Pro checkout intentionally disabled (Coming soon)
+- Full-stack product architecture beyond a static UI
+- Authenticated and logged-out user flows
+- Supabase-backed persistence with RLS
+- Stripe Checkout, webhook sync, and billing portal integration
+- Production-safe Vercel deployment with SPA refresh routing
+- Public SEO-style product surfaces
+- Trust/freshness and disclaimer handling for sensitive travel-readiness information
+- Product thinking across Free, Plus, and future Pro tiers
 
 ## Tech Stack
 
@@ -107,18 +90,17 @@ AtlasBrief turns that fragmented pre-booking research into a structured readines
 
 ## Architecture Highlights
 
-- Clear separation between authenticated and logged-out flows
-- Supabase-backed persistence with local fallback patterns where appropriate
-- User data guarded through RLS-backed access control
-- Stripe subscription lifecycle syncing across checkout, webhook, and account surfaces
-- SPA routing behavior configured for Vercel refresh-safe navigation
-- Public routes and authenticated routes kept intentionally distinct
-- Conservative trust and freshness disclaimer layer across decision points
-- Modular page-level features with reusable UI components
+- Supabase-backed user data with RLS
+- Stripe lifecycle sync across checkout, webhook, account, and billing portal surfaces
+- Public and authenticated route separation
+- Local fallback behavior where appropriate
+- Refresh-safe SPA routing on Vercel
+- Modular feature pages and reusable UI patterns
+- Conservative trust and freshness layer across decision points
 
 ## Product Screens
 
-> Screenshots will be added for the final portfolio presentation.
+> Final screenshots will be added for portfolio presentation.
 
 Suggested screenshot set:
 
@@ -155,6 +137,7 @@ AtlasBrief provides planning intelligence and productized readiness signals. It 
 ## Project Status
 
 - Production MVP complete
-- Public demo available at (https://atlasbrief.vercel.app)
-- Pro tier is preview-only and checkout remains disabled (Coming soon)
-- Future direction: official provider integrations, stronger alerting, B2B widgets, and richer destination coverage
+- Public demo deployed
+- Plus billing flow implemented
+- Pro tier preview-only (Coming soon)
+- Future direction: official provider integrations, richer alerting, broader destination coverage, and B2B/widget surfaces
