@@ -2,8 +2,8 @@
 
 A production-ready travel-readiness and destination intelligence platform for checking where you can go, what it may cost, what changed, and whether a destination fits your trip before booking.
 
-- Live Demo: https://atlasbrief.vercel.app
-- Repository: https://github.com/lazarbukejlovic/atlasbrief
+## [Live Demo](https://atlasbrief.vercel.app)
+## [Repository](https://github.com/lazarbukejlovic/atlasbrief)
 
 ## Overview
 
@@ -155,6 +155,6 @@ AtlasBrief provides planning intelligence and productized readiness signals. It 
 ## Project Status
 
 - Production MVP complete
-- Public demo available at https://atlasbrief.vercel.app
+- Public demo available at (https://atlasbrief.vercel.app)
 - Pro tier is preview-only and checkout remains disabled (Coming soon)
 - Future direction: official provider integrations, stronger alerting, B2B widgets, and richer destination coverage
