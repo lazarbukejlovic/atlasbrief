@@ -61,8 +61,8 @@ const Saved = () => {
       ) : savedBriefs.length === 0 ? (
         <section className="space-y-6">
           <EmptyState
-            title="Your destination watchlist is empty"
-            description="Watchlist intelligence appears here once you save a destination. Track safety movement, cost signals, currency shifts, and local rule updates in one place."
+            title="Your saved briefs are empty"
+            description="Save a destination brief to keep your readiness context in one place. Use Watchlist separately for ongoing signal monitoring."
             actionLabel="Browse destinations"
             actionHref="/destinations"
           />

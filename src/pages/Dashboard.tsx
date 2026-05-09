@@ -109,6 +109,25 @@ const Dashboard = () => {
         </Link>
       </section>
 
+      <section className="rounded-[1.5rem] border border-white/70 bg-white/85 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-navy-muted">
+            <span className="font-semibold text-navy">Next best action:</span> run compare for a short list, review alerts, or build a long-stay feasibility plan.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <Link to="/compare" className="btn-secondary px-4 py-2 text-sm">
+              Compare
+            </Link>
+            <Link to="/alerts" className="btn-secondary px-4 py-2 text-sm">
+              Alerts
+            </Link>
+            <Link to="/stay-planner" className="btn-secondary px-4 py-2 text-sm">
+              Stay planner
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {!isAuthenticated ? (
         <section className="glass-card rounded-[1.75rem] p-6">
           <div className="text-xs font-semibold uppercase tracking-[0.22em] text-sky-accent">Account-ready workspace</div>

@@ -424,15 +424,21 @@ const Reports = () => {
       </section>
 
       <section className="glass-card rounded-[1.75rem] border border-white/70 p-6">
-        <div className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-accent">Recent report mock list</div>
+        <div className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-accent">Recent report activity</div>
         {recentEvents.length === 0 ? (
-          <div className="mt-4 space-y-3">
-            <article className="rounded-2xl border border-white/70 bg-white/85 p-4 text-sm text-navy-muted">
-              Trip readiness summary · Lisbon, Portugal · Preview mock
-            </article>
-            <article className="rounded-2xl border border-white/70 bg-white/85 p-4 text-sm text-navy-muted">
-              Long-stay feasibility summary · Tokyo, Japan · Preview mock
-            </article>
+          <div className="mt-4 rounded-2xl border border-white/70 bg-white/85 p-5">
+            <p className="text-sm font-semibold text-navy">No report actions yet</p>
+            <p className="mt-2 text-sm text-navy-muted">
+              Copy a summary or run print preview to build your recent report activity timeline.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <Link to="/compare" className="btn-secondary px-4 py-2 text-sm">
+                Open compare
+              </Link>
+              <Link to="/alerts" className="btn-secondary px-4 py-2 text-sm">
+                Open alerts
+              </Link>
+            </div>
           </div>
         ) : (
           <div className="mt-4 space-y-3">

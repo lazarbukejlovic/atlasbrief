@@ -16,11 +16,10 @@ const secondaryNavItems = [
   { to: '/watchlist', label: 'Watchlist' },
   { to: '/stay-planner', label: 'Stay Planner' },
   { to: '/saved', label: 'Saved Briefs' },
-  { to: '/profile', label: 'Traveler Profile' },
   { to: '/reports', label: 'Reports' },
+  { to: '/profile', label: 'Traveler Profile' },
   { to: '/partners', label: 'Partners' },
   { to: '/pro', label: 'Pro Preview' },
-  { to: '/pricing', label: 'Pricing' },
   { to: '/about', label: 'About' },
 ];
 
@@ -104,7 +103,7 @@ const Navbar = ({ savedCount }: NavbarProps) => {
             {moreOpen ? (
               <div className="absolute right-0 top-[calc(100%+0.75rem)] z-50 w-64 overflow-hidden rounded-[1.5rem] border border-white/70 bg-white/95 p-2 shadow-card backdrop-blur-xl">
                 <div className="px-3 pb-2 pt-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-navy-muted">
-                  More destinations tools
+                  More planning tools
                 </div>
                 <div className="flex flex-col gap-1">
                   {secondaryNavItems.map((item) => {

@@ -170,7 +170,7 @@ const DossierDetail = () => {
           ) : null}
         </div>
         <p className="mt-3 text-sm leading-7 text-navy-muted">
-          AtlasBrief provides planning intelligence, not official legal or immigration advice. Travelers should verify final requirements with official government or airline sources before booking or departure.
+          AtlasBrief provides planning intelligence only, not legal, immigration, safety, or booking advice. Verify final requirements with official government and carrier sources before booking or departure.
         </p>
       </section>
 

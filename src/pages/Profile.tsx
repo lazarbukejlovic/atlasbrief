@@ -102,6 +102,24 @@ const Profile = () => {
         </article>
       </section>
 
+      {completenessScore < 70 ? (
+        <section className="rounded-[1.75rem] border border-sky-accent/20 bg-sky-50/60 p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm text-navy-muted">
+              <span className="font-semibold text-navy">Profile setup is still in progress.</span> Completing key fields improves compare weighting, report guidance, and alert context.
+            </p>
+            <button
+              type="button"
+              onClick={() => void saveProfile()}
+              disabled={saving || loading}
+              className="btn-primary px-5 py-2.5 text-sm disabled:opacity-60"
+            >
+              {saving ? 'Saving...' : 'Save current progress'}
+            </button>
+          </div>
+        </section>
+      ) : null}
+
       <section className="glass-card rounded-[1.75rem] border border-white/70 p-6">
         <div className="grid gap-5 md:grid-cols-2">
           <label className="block text-sm">

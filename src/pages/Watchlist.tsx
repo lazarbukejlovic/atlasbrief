@@ -74,12 +74,27 @@ const Watchlist = () => {
           Loading destination watchlist...
         </section>
       ) : watchlist.length === 0 ? (
-        <EmptyState
-          title="No watched destinations yet"
-          description="Add a destination to your watchlist to start monitoring travel intelligence before you book."
-          actionLabel="Explore destinations"
-          actionHref="/destinations"
-        />
+        <section className="space-y-6">
+          <EmptyState
+            title="No watched destinations yet"
+            description="Add a destination to your watchlist to start monitoring travel intelligence before you book."
+            actionLabel="Explore destinations"
+            actionHref="/destinations"
+          />
+          <article className="glass-card rounded-[1.75rem] border border-sky-accent/20 p-5">
+            <p className="text-sm text-navy-muted">
+              <span className="font-semibold text-navy">Quick start:</span> save a brief, add it to Watchlist, then monitor updates in Alerts.
+            </p>
+            <div className="mt-3 flex flex-wrap gap-3">
+              <Link to="/saved" className="btn-secondary px-4 py-2 text-sm">
+                Open saved briefs
+              </Link>
+              <Link to="/alerts" className="btn-secondary px-4 py-2 text-sm">
+                Open alerts
+              </Link>
+            </div>
+          </article>
+        </section>
       ) : (
         <section className="grid gap-6 xl:grid-cols-2">
           {watchlist.map((item) => {

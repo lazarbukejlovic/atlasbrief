@@ -804,8 +804,17 @@ const StayPlanner = () => {
             Loading saved stay plans...
           </div>
         ) : stayPlans.length === 0 ? (
-          <div className="mt-6 rounded-2xl border border-white/70 bg-white/80 px-4 py-3 text-sm text-navy-muted">
-            No saved stay plans yet.
+          <div className="mt-6 rounded-2xl border border-white/70 bg-white/80 px-4 py-4 text-sm text-navy-muted">
+            <p className="font-semibold text-navy">No saved stay plans yet.</p>
+            <p className="mt-1">Generate your first feasibility report above, then save it for cross-device access.</p>
+            <div className="mt-3 flex flex-wrap gap-3">
+              <Link to="/dossiers" className="btn-secondary px-4 py-2 text-sm">
+                Browse dossiers
+              </Link>
+              <Link to="/reports?type=long-stay-feasibility" className="btn-secondary px-4 py-2 text-sm">
+                Open long-stay reports
+              </Link>
+            </div>
           </div>
         ) : (
           <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">

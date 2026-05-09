@@ -201,6 +201,13 @@ const Alerts = () => {
           <div className="glass-card rounded-[1.75rem] p-6 text-sm text-navy-muted">
             <p className="font-semibold text-navy">No alerts match this filter.</p>
             <p className="mt-2">Try another filter or clear the destination focus to see the broader alert feed.</p>
+            <button
+              type="button"
+              onClick={() => setActiveFilter('all')}
+              className="btn-secondary mt-4 px-4 py-2 text-sm"
+            >
+              Show all alerts
+            </button>
           </div>
         ) : (
           <div className="space-y-3">

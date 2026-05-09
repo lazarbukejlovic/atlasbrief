@@ -75,53 +75,77 @@ const Dossiers = () => {
         </div>
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-2">
-        {filtered.map((dossier) => (
-          <article key={dossier.slug} className="card-base rounded-[1.75rem] p-6">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-accent">{dossier.destination.region}</p>
-                <h2 className="mt-2 text-2xl font-semibold text-navy">
-                  {dossier.destination.city}, {dossier.destination.country}
-                </h2>
-                <p className="mt-2 text-sm text-navy-muted">{dossier.positioningLine}</p>
+      {filtered.length === 0 ? (
+        <section className="glass-card rounded-[1.75rem] border border-white/70 p-8 text-center">
+          <h2 className="text-2xl font-semibold text-navy">No dossiers match your filters</h2>
+          <p className="mt-3 text-sm text-navy-muted">
+            Try another search or reset region filtering to browse the full dossier set.
+          </p>
+          <div className="mt-5 flex flex-wrap justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                setQuery('');
+                setRegion('All');
+              }}
+              className="btn-secondary px-5 py-2.5 text-sm"
+            >
+              Reset filters
+            </button>
+            <Link to="/destinations" className="btn-primary px-5 py-2.5 text-sm">
+              Browse destinations
+            </Link>
+          </div>
+        </section>
+      ) : (
+        <section className="grid gap-6 xl:grid-cols-2">
+          {filtered.map((dossier) => (
+            <article key={dossier.slug} className="card-base rounded-[1.75rem] p-6">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-accent">{dossier.destination.region}</p>
+                  <h2 className="mt-2 text-2xl font-semibold text-navy">
+                    {dossier.destination.city}, {dossier.destination.country}
+                  </h2>
+                  <p className="mt-2 text-sm text-navy-muted">{dossier.positioningLine}</p>
+                </div>
+                <div className="rounded-2xl border border-white/70 bg-white/80 px-4 py-3 text-right">
+                  <p className="text-xs uppercase tracking-[0.16em] text-navy-muted">Readiness</p>
+                  <p className="mt-1 text-2xl font-semibold text-navy">{dossier.readinessScore}</p>
+                </div>
               </div>
-              <div className="rounded-2xl border border-white/70 bg-white/80 px-4 py-3 text-right">
-                <p className="text-xs uppercase tracking-[0.16em] text-navy-muted">Readiness</p>
-                <p className="mt-1 text-2xl font-semibold text-navy">{dossier.readinessScore}</p>
-              </div>
-            </div>
 
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-2xl bg-white/80 p-3 text-sm text-navy-muted">
-                <p className="text-xs uppercase tracking-[0.16em] text-navy-muted">Budget band</p>
-                <p className="mt-1 font-semibold text-navy">{dossier.destination.budgetBand}</p>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-2xl bg-white/80 p-3 text-sm text-navy-muted">
+                  <p className="text-xs uppercase tracking-[0.16em] text-navy-muted">Budget band</p>
+                  <p className="mt-1 font-semibold text-navy">{dossier.destination.budgetBand}</p>
+                </div>
+                <div className="rounded-2xl bg-white/80 p-3 text-sm text-navy-muted">
+                  <p className="text-xs uppercase tracking-[0.16em] text-navy-muted">Risk signal</p>
+                  <p className="mt-1 font-semibold text-navy">{dossier.safetySignal}</p>
+                </div>
+                <div className="rounded-2xl bg-white/80 p-3 text-sm text-navy-muted">
+                  <p className="text-xs uppercase tracking-[0.16em] text-navy-muted">Remote-work fit</p>
+                  <p className="mt-1 font-semibold text-navy">{dossier.remoteWorkFit}</p>
+                </div>
+                <div className="rounded-2xl bg-white/80 p-3 text-sm text-navy-muted">
+                  <p className="text-xs uppercase tracking-[0.16em] text-navy-muted">Monthly stay estimate</p>
+                  <p className="mt-1 font-semibold text-navy">{dossier.monthlyStayEstimate}</p>
+                </div>
               </div>
-              <div className="rounded-2xl bg-white/80 p-3 text-sm text-navy-muted">
-                <p className="text-xs uppercase tracking-[0.16em] text-navy-muted">Risk signal</p>
-                <p className="mt-1 font-semibold text-navy">{dossier.safetySignal}</p>
-              </div>
-              <div className="rounded-2xl bg-white/80 p-3 text-sm text-navy-muted">
-                <p className="text-xs uppercase tracking-[0.16em] text-navy-muted">Remote-work fit</p>
-                <p className="mt-1 font-semibold text-navy">{dossier.remoteWorkFit}</p>
-              </div>
-              <div className="rounded-2xl bg-white/80 p-3 text-sm text-navy-muted">
-                <p className="text-xs uppercase tracking-[0.16em] text-navy-muted">Monthly stay estimate</p>
-                <p className="mt-1 font-semibold text-navy">{dossier.monthlyStayEstimate}</p>
-              </div>
-            </div>
 
-            <div className="mt-4">
-              <Link
-                to={`/dossiers/${dossier.slug}`}
-                className="inline-flex rounded-2xl bg-navy px-4 py-2 text-sm font-semibold text-white transition hover:bg-navy-light"
-              >
-                View dossier
-              </Link>
-            </div>
-          </article>
-        ))}
-      </section>
+              <div className="mt-4">
+                <Link
+                  to={`/dossiers/${dossier.slug}`}
+                  className="inline-flex rounded-2xl bg-navy px-4 py-2 text-sm font-semibold text-white transition hover:bg-navy-light"
+                >
+                  View dossier
+                </Link>
+              </div>
+            </article>
+          ))}
+        </section>
+      )}
     </div>
   );
 };
