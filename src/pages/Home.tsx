@@ -35,25 +35,29 @@ const Home = () => {
             Know the country <span className="text-gradient">before you land.</span>
           </h1>
           <p className="max-w-2xl text-lg leading-8 text-navy-muted md:text-xl">
-            Check trip readiness, cost, local rules, risk signals, and what changed before booking.
+            Check readiness, cost clarity, local rules, risk context, and what changed before booking.
           </p>
           <p className="max-w-2xl text-sm leading-7 text-navy-muted">
             Built for U.S. outbound travelers, frequent travelers, remote workers, and long-stay planners. AtlasBrief is not an itinerary planner and not official legal advice.
           </p>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Link to="/dossiers" className="btn-primary inline-flex items-center justify-center gap-2">
-              Explore dossiers
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link to="/destinations" className="btn-secondary inline-flex items-center justify-center">
-              Start a readiness check
-            </Link>
-            <Link to="/compare" className="btn-secondary inline-flex items-center justify-center">
-              Compare destinations
-            </Link>
-            <Link to="/pricing" className="btn-secondary inline-flex items-center justify-center">
-              View pricing
-            </Link>
+          <div className="space-y-3">
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Link to="/dossiers" className="btn-primary inline-flex items-center justify-center gap-2">
+                Explore dossiers
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link to="/destinations" className="btn-primary inline-flex items-center justify-center">
+                Start a readiness check
+              </Link>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Link to="/compare" className="btn-secondary inline-flex items-center justify-center">
+                Compare destinations
+              </Link>
+              <Link to="/pricing" className="btn-secondary inline-flex items-center justify-center">
+                View pricing
+              </Link>
+            </div>
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
             <DashboardCard

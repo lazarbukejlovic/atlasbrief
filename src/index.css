@@ -75,17 +75,138 @@
     background-clip: text;
   }
 
-  .animate-trail {
-    animation: dash-trail 9s linear infinite;
+  .hero-plane-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-plane-glow {
+    position: absolute;
+    z-index: 0;
+    height: 84px;
+    width: 84px;
+    border-radius: 9999px;
+    background: radial-gradient(circle, rgba(96, 165, 250, 0.35) 0%, rgba(96, 165, 250, 0) 70%);
+    animation: hero-glow-breathe 4.2s ease-in-out infinite;
+  }
+
+  .hero-motion-lines {
+    position: absolute;
+    right: 52px;
+    top: 50%;
+    height: 2px;
+    width: 72px;
+    transform: translateY(-50%);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(96, 165, 250, 0.45));
+    filter: blur(0.2px);
+  }
+
+  .hero-cloud {
+    position: absolute;
+    border-radius: 9999px;
+    background: linear-gradient(120deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.18));
+    filter: blur(0.4px);
+    opacity: 0.82;
+  }
+
+  .hero-cloud-a {
+    left: 8%;
+    top: 15%;
+    height: 44px;
+    width: 128px;
+  }
+
+  .hero-cloud-b {
+    right: 12%;
+    top: 22%;
+    height: 36px;
+    width: 108px;
+  }
+
+  .hero-trail-dash {
+    animation: hero-trail-dash 8.5s linear infinite;
+  }
+
+  .hero-trail-soft {
+    animation: hero-trail-soft 8s ease-in-out infinite;
+  }
+
+  .hero-dot-flow {
+    animation: hero-dot-flow 8s ease-in-out infinite;
+  }
+
+  .hero-signal-ring {
+    transform-origin: center;
+    animation: hero-signal-ring 4.6s ease-in-out infinite;
   }
 }
 
-@keyframes dash-trail {
+@keyframes hero-trail-dash {
   from {
-    stroke-dashoffset: 320;
+    stroke-dashoffset: 300;
   }
 
   to {
     stroke-dashoffset: 0;
+  }
+}
+
+@keyframes hero-trail-soft {
+  0%,
+  100% {
+    opacity: 0.62;
+  }
+
+  50% {
+    opacity: 0.92;
+  }
+}
+
+@keyframes hero-dot-flow {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes hero-signal-ring {
+  0%,
+  100% {
+    opacity: 0.46;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.88;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes hero-glow-breathe {
+  0%,
+  100% {
+    opacity: 0.44;
+    transform: scale(0.95);
+  }
+
+  50% {
+    opacity: 0.72;
+    transform: scale(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-plane-glow,
+  .hero-trail-dash,
+  .hero-trail-soft,
+  .hero-dot-flow,
+  .hero-signal-ring {
+    animation: none !important;
   }
 }
