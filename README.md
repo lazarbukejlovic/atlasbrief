@@ -2,8 +2,8 @@
 
 A production-deployed travel-readiness and destination intelligence platform for evaluating destination fit, cost pressure, risk context, and what changed before booking.
 
-## [Live Demo](https://atlasbrief.vercel.app)
-## [Repository](https://github.com/lazarbukejlovic/atlasbrief)
+- **Live Demo:** https://atlasbrief.vercel.app
+- **Repository:** https://github.com/lazarbukejlovic/atlasbrief
 
 ## At A Glance
 
